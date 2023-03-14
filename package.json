@@ -40,6 +40,7 @@
     "eslint-plugin-vue": "^9.9.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
+    "nodemon": "^2.0.21",
     "prettier": "2.8.4"
   },
   "lint-staged": {
@@ -47,5 +48,8 @@
       "prettier --write --ignore-unknown",
       "eslint --fix --color"
     ]
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3"
   }
 }
