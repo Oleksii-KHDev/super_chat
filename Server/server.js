@@ -1,5 +1,8 @@
+let { PORT } = process.env;
 const express = require('express');
 const app = express();
-app.listen(3000, () => {
-  console.log('Server has been started');
+
+PORT = PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server has been started on port: ${PORT}`);
 });
