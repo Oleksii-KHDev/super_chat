@@ -1,0 +1,32 @@
+{
+  "name": "super_chat",
+  "version": "1.0.0",
+  "description": "Test task for dZENcode. Chat using Node.js, Vue.js, Socket.io, Express.js",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oleksii-KHDev/super_chat.git"
+  },
+  "keywords": [
+    "dZENcode",
+    "test",
+    "task",
+    "chat",
+    "Vue.js",
+    "Node.js",
+    "Socket.io",
+    "Express.js"
+  ],
+  "author": {
+    "name" : "Barney Rubble",
+    "email" : "b@rubble.com"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Oleksii-KHDev/super_chat/issues"
+  },
+  "homepage": "https://github.com/Oleksii-KHDev/super_chat#readme"
+}
