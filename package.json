@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "pretty": "prettier --write --ignore-unknown **/*.js",
+    "lint": "eslint --ext .js **/*",
+    "lint:fix": "eslint --fix --color --ext .js **/*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -31,6 +33,10 @@
   },
   "homepage": "https://github.com/Oleksii-KHDev/super_chat#readme",
   "devDependencies": {
+    "eslint": "^8.36.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-vue": "^9.9.0",
     "prettier": "2.8.4"
   }
 }
