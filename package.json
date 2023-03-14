@@ -4,8 +4,8 @@
   "description": "Test task for dZENcode. Chat using Node.js, Vue.js, Socket.io, Express.js",
   "main": "server.js",
   "scripts": {
-    "start" : "node --trace-warnings -r dotenv/config server/server.js dotenv_config_path=.env",
-    "dev" : "nodemon --trace-warnings -r dotenv/config server/server.js dotenv_config_path=.env",
+    "start": "node --trace-warnings -r dotenv/config server/server.js dotenv_config_path=.env",
+    "dev": "nodemon --trace-warnings -r dotenv/config server/server.js dotenv_config_path=.env",
     "pretty": "prettier --write --ignore-unknown **/*.js",
     "lint": "eslint --ext .js **/*",
     "lint:fix": "eslint --fix --color --ext .js **/*",
@@ -53,7 +53,8 @@
     ]
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "dotenv": "^16.0.3"
+    "socket.io": "^4.6.1"
   }
 }
