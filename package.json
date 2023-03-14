@@ -47,5 +47,8 @@
       "prettier --write --ignore-unknown",
       "eslint --fix --color"
     ]
+  },
+  "dependencies": {
+    "express": "^4.18.2"
   }
 }
