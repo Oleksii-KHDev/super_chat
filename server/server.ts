@@ -1,8 +1,8 @@
 import path from 'node:path';
 import express from 'express';
 import http from 'node:http';
-import * as url from 'node:url';
 import { Server } from 'socket.io';
+import * as url from 'url';
 
 const dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const publicPath = path.join(dirname, '../client');
