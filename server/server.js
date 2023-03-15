@@ -1,9 +1,12 @@
-const path = require('node:path');
-const express = require('express');
-const http = require('node:http');
-const { Server } = require('socket.io');
+import path from 'node:path';
+import express from 'express';
+import http from 'node:http';
+import * as url from 'node:url';
+import { Server } from 'socket.io';
 
-const publicPath = path.join(__dirname, '../client');
+const dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const publicPath = path.join(dirname, '../client');
+
 const port = process.env.PORT || 3000;
 const app = express();
 app.use(express.static(publicPath));

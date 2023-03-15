@@ -36,15 +36,21 @@
   },
   "homepage": "https://github.com/Oleksii-KHDev/super_chat#readme",
   "devDependencies": {
+    "@types/node": "^18.15.3",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
     "eslint": "8.22.0",
     "eslint-config-prettier": "^8.7.0",
+    "eslint-import-resolver-typescript": "^3.5.3",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.9.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
     "nodemon": "^2.0.21",
-    "prettier": "2.8.4"
+    "prettier": "2.8.4",
+    "typescript": "^4.9.5"
   },
   "lint-staged": {
     "*.js": [
@@ -56,5 +62,9 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "socket.io": "^4.6.1"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=10.0.0"
   }
 }
