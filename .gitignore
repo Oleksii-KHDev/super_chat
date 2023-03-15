@@ -106,4 +106,5 @@ dist
 # Php Storm projects files
 .idea
 
+# Remove all compiled files
 /**/*.js
