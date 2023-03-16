@@ -108,3 +108,9 @@ dist
 
 # Remove all compiled files
 /**/*.js
+
+# SqLite DataBase
+/prisma/super_chat.db
+
+#Prisma DB journal
+/prisma/super_chat.db-journal
