@@ -107,7 +107,7 @@ dist
 .idea
 
 # Remove all compiled files
-/**/*.js
+/dist
 
 # SqLite DataBase
 /prisma/super_chat.db
