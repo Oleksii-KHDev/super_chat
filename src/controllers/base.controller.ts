@@ -6,7 +6,7 @@ export abstract class BaseController implements IController {
   protected readonly _router: Router;
   protected readonly _dataSourceClient: object;
 
-  constructor(dataSourceClient: object) {
+  protected constructor(dataSourceClient: object) {
     this._router = Router();
     this._dataSourceClient = dataSourceClient;
   }

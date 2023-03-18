@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node --trace-warnings -r dotenv/config server/server.js dotenv_config_path=.env",
     "dev": "npx nodemon -e ts --ignore 'node_modules/**/node_modules' --exec \"npm run build && node --trace-warnings -r dotenv/config dist/super-chat.js dotenv_config_path=./.env\"",
-    "pretty": "prettier --write --ignore-unknown **/*.ts",
+    "pretty": "prettier --write --ignore-unknown **/*.{js,jsx,vue,ts}",
     "lint": "eslint --ext .ts **/*",
     "lint:fix": "eslint --fix --color --ext .ts **/*",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -58,7 +58,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "prettier --write --ignore-unknown",
+      "prettier --write --ignore-unknown **/*.{js,jsx,vue,ts}",
       "eslint --fix --color"
     ]
   },
