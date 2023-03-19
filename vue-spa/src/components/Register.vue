@@ -93,7 +93,11 @@
           * Required fields
         </div>
         <div class="d-grid gap-2 col-6 mx-auto">
-          <button @click.self="submitForm" type="button" class="btn btn-primary">
+          <button
+            @click.self="submitForm"
+            type="button"
+            class="btn btn-primary"
+          >
             Register
           </button>
         </div>

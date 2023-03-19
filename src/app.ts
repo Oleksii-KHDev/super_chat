@@ -10,6 +10,7 @@ import path from 'node:path';
 import * as url from 'url';
 import chalk from 'chalk';
 import dedent from 'dedent';
+import cors from 'cors';
 
 export class App {
   protected readonly app: Express;
@@ -39,6 +40,15 @@ export class App {
     this.dataSource = dataSource;
   }
 
+  protected useCors() {
+    const corsSettings = {
+      origin: '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    };
+    this.app.use(cors(corsSettings));
+  }
   protected useRoutes() {
     this.app.use('/user', this.userController.router);
     this.app.use('/message', this.messageController.router);
@@ -104,6 +114,7 @@ export class App {
     this.dataSource.connect();
   }
   public async init() {
+    this.useCors();
     this.useRoutes();
     this.useExceptionHandler();
     this.useStaticPath();
