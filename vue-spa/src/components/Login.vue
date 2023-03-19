@@ -15,7 +15,8 @@
         <h3 class="card-title">Welcome to Super chat</h3>
         <div
           v-bind:class="[isShowFormError ? 'show' : 'hide']"
-          class="alert alert-danger" role="alert"
+          class="alert alert-danger"
+          role="alert"
         >
           {{ formErrorMessage }}
         </div>
