@@ -51,6 +51,32 @@
           </div>
         </div>
         <div class="mb-3">
+          <label id="nameHelp" for="nameInput" class="form-label"
+            >*Enter your name
+            <input
+              type="text"
+              class="form-control"
+              id="nameInput"
+              name="name"
+              aria-describedby="nameHelp"
+              v-model="name"
+              @focus.self="onFocus"
+            />
+          </label>
+          <div
+            class="alert alert-warning align-items-center form-text"
+            role="alert"
+            v-bind:class="[isShowNameError ? 'show' : 'hide']"
+          >
+            <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:">
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>
+              {{ nameErrorMessage }}
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
           <label for="inputPassword" class="form-label"
             >*Enter Password
             <input
@@ -106,6 +132,7 @@
               class="form-control"
               id="homePage"
               @focus.self="onFocus"
+              v-model="homePage"
             />
           </label>
         </div>
@@ -133,12 +160,16 @@ export default {
   data() {
     return {
       login: '',
+      name: '',
       password: '',
       confirmPassword: '',
+      homePage: '',
       isShowLoginError: false,
       isShowPasswordError: false,
       isShowConfirmPasswordError: false,
+      isShowNameError: false,
       PasswordErrorMessage: '',
+      nameErrorMessage: '',
       ConfirmPasswordErrorMessage: '',
       loginErrorMessage: '',
       formErrorMessage: '',
@@ -155,7 +186,18 @@ export default {
     formValidation() {
       const loginValidation = this.loginValidation();
       const passwordValidation = this.passwordValidation();
-      return loginValidation && passwordValidation;
+      const nameValidation = this.nameValidation();
+      return loginValidation && passwordValidation && nameValidation;
+    },
+    nameValidation() {
+      if (!this.name) {
+        this.isShowNameError = true;
+        this.nameErrorMessage = 'This field is required';
+        return false;
+      }
+      this.isShowNameError = false;
+      this.nameErrorMessage = '';
+      return true;
     },
     loginValidation() {
       if (!this.login) {
@@ -211,6 +253,8 @@ export default {
         const resp = await RegisterRequest({
           login: this.login,
           password: this.password,
+          name: this.name,
+          homeUrl: this.homePage,
         });
 
         if (resp.status === 'ok') {

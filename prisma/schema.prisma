@@ -8,10 +8,10 @@ datasource db {
 }
 
 model User {
-  id BigInt @id @default(autoincrement())
-  email String @unique
-  name String
-  homePage String? @map("home_page")
+  id       Int     @id @default(autoincrement())
+  email    String     @unique
+  name     String
+  homePage String?    @map("home_page")
   password String
   comments Comments[]
 
@@ -19,11 +19,11 @@ model User {
 }
 
 model Comments {
-  id BigInt @id @default(autoincrement())
-  parentId   Int @map("parent_id") @default(0)
-  userId BigInt @map("user_id")
-  user User @relation(fields: [userId], references: [id])
-  text String
+  id       Int @id @default(autoincrement())
+  parentId Int    @default(0) @map("parent_id")
+  userId   Int @map("user_id")
+  text     String
+  user     User   @relation(fields: [userId], references: [id])
 
-  @@map("Comments")
+  @@map("comments")
 }

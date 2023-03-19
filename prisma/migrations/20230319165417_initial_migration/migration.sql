@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "users" (
-    "id" BIGINT NOT NULL PRIMARY KEY,
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "home_page" TEXT,
@@ -8,12 +8,12 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
-CREATE TABLE "Comments" (
-    "id" BIGINT NOT NULL PRIMARY KEY,
+CREATE TABLE "comments" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "parent_id" INTEGER NOT NULL DEFAULT 0,
-    "user_id" BIGINT NOT NULL,
+    "user_id" INTEGER NOT NULL,
     "text" TEXT NOT NULL,
-    CONSTRAINT "Comments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "comments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateIndex

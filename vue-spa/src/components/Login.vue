@@ -151,7 +151,7 @@ export default {
       if (this.formValidation()) {
         const resp = await loginRequest({
           login: this.login,
-          password: this.password,
+          checkPassword: this.password,
         });
 
         if (resp.status === 'ok') {

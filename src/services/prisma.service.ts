@@ -6,9 +6,6 @@ export default class PrismaService {
     this._client = new PrismaClient();
   }
 
-  /**
-   * @inheritDoc
-   */
   async connect(): Promise<void> {
     try {
       await this._client.$connect();
@@ -20,16 +17,10 @@ export default class PrismaService {
     }
   }
 
-  /**
-   * @inheritDoc
-   */
   async disconnect(): Promise<void> {
     await this._client.$disconnect();
   }
 
-  /**
-   * @inheritDoc
-   */
   getClient(): PrismaClient {
     return this._client;
   }

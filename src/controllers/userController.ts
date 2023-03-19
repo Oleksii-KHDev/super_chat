@@ -13,8 +13,14 @@ export class UserController extends BaseController implements IController {
     ]);
   }
 
-  login(req: Request, res: Response) {
-    this.sendJson(res, 401, { status: 'error', message: 'User not found' });
+  async login(req: Request, res: Response, next: NextFunction) {
+    const result = await this.userService.validateUser(req.body);
+
+    if (!result) {
+      return next(createError(401, 'Invalid credentials'));
+    }
+
+    this.sendJson(res, 200, { status: 'ok', message: 'User logged in' });
   }
 
   async register(
