@@ -40,7 +40,12 @@
         <div class="mb-3">
           <label for="inputPassword" class="form-label"
             >Password
-            <input v-model="password" type="password" class="form-control" id="inputPassword" />
+            <input
+              v-model="password"
+              type="password"
+              class="form-control"
+              id="inputPassword"
+            />
           </label>
           <div
             class="alert alert-warning align-items-center form-text"
@@ -69,6 +74,8 @@
 </template>
 
 <script>
+import loginRequest from '@/requests/login/login.request';
+
 export default {
   name: 'LoginComponent',
   data() {
@@ -118,9 +125,13 @@ export default {
       this.PasswordErrorMessage = '';
       return true;
     },
-    loginChat() {
+    async loginChat() {
       if (this.formValidation()) {
-        console.log('OK');
+        const resp = await loginRequest({
+          login: this.login,
+          password: this.password,
+        });
+        console.log(resp);
       }
     },
   },
