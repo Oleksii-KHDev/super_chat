@@ -4,11 +4,9 @@ import { IControllerRoute } from '../interfaces/route.interface.js';
 
 export abstract class BaseController implements IController {
   protected readonly _router: Router;
-  protected readonly _dataSourceClient: object;
 
-  protected constructor(dataSourceClient: object) {
+  protected constructor() {
     this._router = Router();
-    this._dataSourceClient = dataSourceClient;
   }
 
   get router() {

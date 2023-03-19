@@ -1,6 +1,5 @@
-import { IDataSource } from '../interfaces/data-source.interface.js';
 import { PrismaClient } from '@prisma/client';
-export default class PrismaService implements IDataSource {
+export default class PrismaService {
   private readonly _client: PrismaClient;
 
   constructor() {

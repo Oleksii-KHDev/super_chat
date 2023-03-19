@@ -16,10 +16,14 @@ export class ExceptionHandler implements IExceptionHandler {
         dedent`${chalk.red('ERROR: ')} ${err.statusCode}: ${err.message}`
       );
 
-      res.status(err.statusCode).send({ err: err.message });
+      res
+        .status(err.statusCode)
+        .send({ status: 'error', message: err.message });
     } else {
       console.log(dedent`${chalk.red('ERROR: ')} ${err.message}}`);
-      res.status(500).send({ err: err.message });
+      res
+        .status(500)
+        .send({ status: 'error', message: 'Something went wrong' });
     }
   }
 }

@@ -4,7 +4,7 @@ import { Server as SocketServer } from 'socket.io';
 import { ExceptionHandler } from './handlers/exeption.handler.js';
 import { UserController } from './controllers/userController.js';
 import { MessageController } from './controllers/message.controller.js';
-import { IDataSource } from './interfaces/data-source.interface.js';
+import PrismaService from './services/prisma.service.js';
 import process from 'node:process';
 import path from 'node:path';
 import * as url from 'url';
@@ -20,26 +20,25 @@ export class App {
   protected readonly userController: UserController;
   protected readonly exceptionHandler: ExceptionHandler;
   protected readonly messageController: MessageController;
-  protected dataSource: IDataSource;
+  protected prismaService: PrismaService;
 
   constructor(
-    /**
-     * @TODO
-     * Add interfaces here
-     */
     userController: UserController,
     exceptionHandler: ExceptionHandler,
     messageController: MessageController,
-    dataSource: IDataSource
+    prismaService: PrismaService
   ) {
     this.app = express();
     this.port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
     this.userController = userController;
     this.exceptionHandler = exceptionHandler;
     this.messageController = messageController;
-    this.dataSource = dataSource;
+    this.prismaService = prismaService;
   }
 
+  protected useBodyParser() {
+    this.app.use(express.json());
+  }
   protected useCors() {
     const corsSettings = {
       origin: '*',
@@ -85,7 +84,7 @@ export class App {
   protected addProcessEvents() {
     process.on('exit', async () => {
       console.log(`Chat process exits`);
-      this.disconnectFromDataSource();
+      await this.disconnectFromDataSource();
     });
 
     process.on('unhandledRejection', (reason, promise) => {
@@ -105,21 +104,22 @@ export class App {
     });
   }
 
-  protected connectToDataSource() {
+  protected async connectToDataSource() {
     if (this.socketServer) {
-      this.dataSource.connect();
+      await this.prismaService.connect();
     }
   }
-  protected disconnectFromDataSource() {
-    this.dataSource.connect();
+  protected async disconnectFromDataSource() {
+    await this.prismaService.disconnect();
   }
   public async init() {
     this.useCors();
+    this.useBodyParser();
     this.useRoutes();
-    this.useExceptionHandler();
     this.useStaticPath();
+    this.useExceptionHandler();
     this.createServer();
-    this.connectToDataSource();
+    await this.connectToDataSource();
     this.addProcessEvents();
   }
 }
