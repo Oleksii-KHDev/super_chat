@@ -13,6 +13,12 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">Welcome to Super chat</h3>
+        <div
+          v-bind:class="[isShowFormError ? 'show' : 'hide']"
+          class="alert alert-danger" role="alert"
+        >
+          {{ formErrorMessage }}
+        </div>
         <div class="mb-3">
           <label for="loginInput" class="form-label"
             >Login (Email)
@@ -22,6 +28,7 @@
               id="loginInput"
               aria-describedby="loginHelp"
               v-model="login"
+              @focus.self="onFocus"
             />
           </label>
           <div
@@ -45,6 +52,7 @@
               type="password"
               class="form-control"
               id="inputPassword"
+              @focus.self="onFocus"
             />
           </label>
           <div
@@ -86,9 +94,17 @@ export default {
       isShowLoginError: false,
       isShowPasswordError: false,
       PasswordErrorMessage: '',
+      isShowFormError: false,
+      formErrorMessage: '',
     };
   },
   methods: {
+    onFocus() {
+      if (this.isShowFormError) {
+        this.isShowFormError = false;
+        this.formErrorMessage = '';
+      }
+    },
     register() {
       this.$router.push('/register');
     },
@@ -131,7 +147,13 @@ export default {
           login: this.login,
           password: this.password,
         });
-        console.log(resp);
+
+        if (resp.status === 'ok') {
+          this.$router.push('/chat');
+        } else {
+          this.isShowFormError = true;
+          this.formErrorMessage = resp.message;
+        }
       }
     },
   },
@@ -170,7 +192,7 @@ button {
   fill: currentcolor;
 }
 
-.alert.alert-warning {
+.alert {
   padding: 0.5rem;
 }
 </style>

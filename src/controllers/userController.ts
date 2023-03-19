@@ -12,7 +12,7 @@ export class UserController extends BaseController implements IController {
   }
 
   login(req: Request, res: Response) {
-    this.sendJson(res, 200, { status: 'login ok' });
+    this.sendJson(res, 401, { status: 'error', message: 'User not found' });
   }
 
   register(req: Request, res: Response) {
