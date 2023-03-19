@@ -15,10 +15,15 @@
         <h3 class="card-title">Welcome to Super chat</h3>
         <div
           v-bind:class="[isShowFormError ? 'show' : 'hide']"
-          class="alert alert-danger"
+          class="alert alert-danger align-items-center"
           role="alert"
         >
-          {{ formErrorMessage }}
+          <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:">
+            <use xlink:href="#exclamation-triangle-fill" />
+          </svg>
+          <div>
+            {{ formErrorMessage }}
+          </div>
         </div>
         <div class="mb-3">
           <label for="loginInput" class="form-label"

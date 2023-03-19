@@ -13,6 +13,18 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">Please input your data</h3>
+        <div
+          v-bind:class="[isShowFormError ? 'show' : 'hide']"
+          class="alert alert-danger align-items-center"
+          role="alert"
+        >
+          <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:">
+            <use xlink:href="#exclamation-triangle-fill" />
+          </svg>
+          <div>
+            {{ formErrorMessage }}
+          </div>
+        </div>
         <div class="mb-3">
           <label for="loginInput" class="form-label"
             >*Enter your Login (Email)
@@ -22,6 +34,7 @@
               id="loginInput"
               aria-describedby="loginHelp"
               v-model="login"
+              @focus.self="onFocus"
             />
           </label>
           <div
@@ -45,6 +58,7 @@
               class="form-control"
               id="inputPassword"
               v-model="password"
+              @focus.self="onFocus"
             />
           </label>
           <div
@@ -68,6 +82,7 @@
               class="form-control"
               id="confirmPassword"
               v-model="confirmPassword"
+              @focus.self="onFocus"
             />
           </label>
           <div
@@ -86,7 +101,12 @@
         <div class="mb-3">
           <label for="homePage" class="form-label"
             >Home Page
-            <input type="text" class="form-control" id="homePage" />
+            <input
+              type="text"
+              class="form-control"
+              id="homePage"
+              @focus.self="onFocus"
+            />
           </label>
         </div>
         <div class="h6 pb-2 mb-4 text-danger border-bottom border-danger">
@@ -107,6 +127,8 @@
 </template>
 
 <script>
+import RegisterRequest from '@/requests/register/register.request';
+
 export default {
   data() {
     return {
@@ -119,9 +141,17 @@ export default {
       PasswordErrorMessage: '',
       ConfirmPasswordErrorMessage: '',
       loginErrorMessage: '',
+      formErrorMessage: '',
+      isShowFormError: '',
     };
   },
   methods: {
+    onFocus() {
+      if (this.isShowFormError) {
+        this.isShowFormError = false;
+        this.formErrorMessage = '';
+      }
+    },
     formValidation() {
       const loginValidation = this.loginValidation();
       const passwordValidation = this.passwordValidation();
@@ -176,9 +206,19 @@ export default {
 
       return result;
     },
-    submitForm() {
+    async submitForm() {
       if (this.formValidation()) {
-        console.log('OK');
+        const resp = await RegisterRequest({
+          login: this.login,
+          password: this.password,
+        });
+
+        if (resp.status === 'ok') {
+          this.$router.push('/chat');
+        } else {
+          this.isShowFormError = true;
+          this.formErrorMessage = resp.message;
+        }
       }
     },
   },
@@ -206,7 +246,7 @@ label {
   fill: currentcolor;
 }
 
-.alert.alert-warning {
+.alert {
   padding: 0.5rem;
 }
 
