@@ -51,7 +51,9 @@ export default {
     };
   },
   created() {
-    this.socket = io(`${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`);
+    this.socket = io(
+      `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`
+    );
   },
   methods: {},
   components: {
