@@ -11,6 +11,7 @@ import * as url from 'url';
 import chalk from 'chalk';
 import dedent from 'dedent';
 import cors from 'cors';
+import { CORS_SETTINGS } from './constants.js';
 
 export class App {
   protected readonly app: Express;
@@ -40,13 +41,7 @@ export class App {
     this.app.use(express.json());
   }
   protected useCors() {
-    const corsSettings = {
-      origin: '*',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      preflightContinue: false,
-      optionsSuccessStatus: 204,
-    };
-    this.app.use(cors(corsSettings));
+    this.app.use(cors(CORS_SETTINGS));
   }
   protected useRoutes() {
     this.app.use('/user', this.userController.router);
@@ -69,10 +64,7 @@ export class App {
     });
     this.socketServer = new SocketServer(this.server, {
       pingTimeout: 1000,
-      cors: {
-        origin: 'http://localhost:8080',
-        methods: ['GET', 'POST'],
-      },
+      cors: CORS_SETTINGS,
     });
   }
 

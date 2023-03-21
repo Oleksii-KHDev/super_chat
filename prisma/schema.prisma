@@ -13,17 +13,18 @@ model User {
   name     String
   homePage String?    @map("home_page")
   password String
-  comments Comments[]
+  comments Message[]
 
   @@map("users")
 }
 
-model Comments {
+model Message {
   id       Int @id @default(autoincrement())
   parentId Int    @default(0) @map("parent_id")
   userId   Int @map("user_id")
   text     String
+  file     String?
   user     User   @relation(fields: [userId], references: [id])
 
-  @@map("comments")
+  @@map("messages")
 }

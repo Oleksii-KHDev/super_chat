@@ -8,12 +8,13 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
-CREATE TABLE "comments" (
+CREATE TABLE "messages" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "parent_id" INTEGER NOT NULL DEFAULT 0,
     "user_id" INTEGER NOT NULL,
     "text" TEXT NOT NULL,
-    CONSTRAINT "comments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "file" TEXT,
+    CONSTRAINT "messages_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateIndex
