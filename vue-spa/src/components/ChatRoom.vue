@@ -52,7 +52,7 @@ export default {
   },
   created() {
     this.socket = io(
-      `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`
+      `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`,
     );
   },
   methods: {},
