@@ -1,6 +1,6 @@
 import express, { Express } from 'express';
 import { Server } from 'node:http';
-import { Server as SocketServer } from 'socket.io';
+import { ChatSocketServer } from './socket-server.js';
 import { ExceptionHandler } from './handlers/exeption.handler.js';
 import { UserController } from './controllers/userController.js';
 import { MessageController } from './controllers/message.controller.js';
@@ -16,7 +16,6 @@ import { CORS_SETTINGS } from './constants.js';
 export class App {
   protected readonly app: Express;
   protected server?: Server;
-  protected socketServer?: SocketServer;
   protected readonly port: number;
   protected readonly userController: UserController;
   protected readonly exceptionHandler: ExceptionHandler;
@@ -62,21 +61,9 @@ export class App {
     this.server = this.app.listen(this.port, () => {
       console.log(`Server has been started on port: ${this.port}`);
     });
-    this.socketServer = new SocketServer(this.server, {
-      pingTimeout: 1000,
-      cors: CORS_SETTINGS,
-    });
-  }
-
-  protected addServerEvents() {
-    if (this.socketServer) {
-      this.socketServer.on('connection', (socket) => {
-        console.log('Client connected');
-        socket.on('disconnect', () => {
-          console.log('Client disconnected');
-        });
-      });
-    }
+    const socketServer = new ChatSocketServer(this.server);
+    socketServer.startSocketServer();
+    socketServer.addServerEvents();
   }
 
   protected addProcessEvents() {
@@ -103,22 +90,33 @@ export class App {
   }
 
   protected async connectToDataSource() {
-    if (this.socketServer) {
-      await this.prismaService.connect();
-    }
+    await this.prismaService.connect();
   }
   protected async disconnectFromDataSource() {
     await this.prismaService.disconnect();
   }
+
+  /**
+   * Initialisation of chat application
+   */
   public async init() {
-    this.useCors();
-    this.useBodyParser();
-    this.useRoutes();
-    this.useStaticPath();
-    this.useExceptionHandler();
-    this.createServer();
-    this.addServerEvents();
-    await this.connectToDataSource();
-    this.addProcessEvents();
+    try {
+      this.useCors();
+      this.useBodyParser();
+      this.useRoutes();
+      this.useStaticPath();
+      this.useExceptionHandler();
+      this.createServer();
+      await this.connectToDataSource();
+      this.addProcessEvents();
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(
+          dedent`${chalk.red('Error during application initialisation:')} ${
+            err.message
+          }`
+        );
+      }
+    }
   }
 }
