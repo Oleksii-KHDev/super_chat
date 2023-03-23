@@ -8,7 +8,8 @@ export class User {
     private readonly _login: string,
     private _name: string,
     private _password?: string,
-    private _homeUrl?: string
+    private _homeUrl?: string,
+    private _id?: number
   ) {}
 
   get login(): string {
@@ -25,6 +26,10 @@ export class User {
 
   get name(): string {
     return this._name;
+  }
+
+  get id(): number | undefined {
+    return this._id;
   }
 
   /**

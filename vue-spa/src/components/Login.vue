@@ -156,6 +156,7 @@ export default {
 
         if (resp.status === 'ok') {
           this.$router.push('/chat');
+          this.$store.commit('set_user', resp.user);
         } else {
           this.isShowFormError = true;
           this.formErrorMessage = resp.message;

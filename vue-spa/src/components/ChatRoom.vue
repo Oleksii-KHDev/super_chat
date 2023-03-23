@@ -7,16 +7,16 @@
         class="d-flex flex-column m-auto text-center justify-content-center mb-2 header"
       >
         <h2 class="fw-bold">{{ chatName }}</h2>
-        <p class="text-muted" v-if="channelMessages.length === 0">
+        <p class="text-muted" v-if="chatMessages.length === 0">
           {{ noMessagesText }}
         </p>
       </div>
       <div class="messages">
         <div
-          v-for="msg in channelMessages"
+          v-for="msg in chatMessages"
           :key="msg.id"
           class="d-flex gap-2 w-75 mb-4 bubble"
-          :class="{ self: currentUser.id === msg.userId }"
+          :class="{ self: currentUser.id === msg.user.id }"
         >
           <img
             :src="msg?.avatar || avatar1"
@@ -25,15 +25,15 @@
             alt="avatar"
           />
           <div class="text">
-            <div class="username fw-bold">{{ msg.username }}</div>
+            <div class="username fw-bold">{{ msg.user.name}}</div>
             <div class="chatfield p-2">
-              <span v-html="convertToLink(msg.message)"></span>
+              <span v-html="msg.message.text"></span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <ChatControl></ChatControl>
+    <ChatControl @send-message="sendMessage"></ChatControl>
   </div>
 </template>
 
@@ -44,18 +44,48 @@ import io from 'socket.io-client';
 export default {
   data() {
     return {
+      avatar1: '../avatar1.svg',
       chatName: this.$store.getters.chatName,
-      channelMessages: this.$store.getters.messages,
+      chatMessages: [],
       noMessagesText: 'There are no messages in the chat',
       socket: {},
+      currentUser: this.$store.getters.currentUser,
     };
   },
   created() {
     this.socket = io(
       `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`,
     );
+    this.socket.on('newMessage', this.newMessage);
+    this.socket.on('chatInit', this.initChat)
   },
-  methods: {},
+  provide() {
+    return {
+      getSocketConnection: this.getSocketConnection,
+    };
+  },
+  methods: {
+    initChat(messages) {
+      this.chatMessages = messages;
+    },
+    getSocketConnection() {
+      return this.socket;
+    },
+    sendMessage(message) {
+      this.socket.emit('newMessage', {
+        user: this.currentUser,
+        message: {
+          parentId: 0,
+          userId: this.currentUser.id,
+          text: message,
+        },
+      });
+    },
+    newMessage(message) {
+      console.log(message);
+      this.chatMessages.push(message);
+    },
+  },
   components: {
     ChatControl,
   },

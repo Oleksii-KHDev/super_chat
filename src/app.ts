@@ -61,7 +61,7 @@ export class App {
     this.server = this.app.listen(this.port, () => {
       console.log(`Server has been started on port: ${this.port}`);
     });
-    const socketServer = new ChatSocketServer(this.server);
+    const socketServer = new ChatSocketServer(this.server, this.prismaService);
     socketServer.startSocketServer();
     socketServer.addServerEvents();
   }
