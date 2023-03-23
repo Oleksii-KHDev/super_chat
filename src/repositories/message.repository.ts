@@ -1,4 +1,3 @@
-import { Message } from '../entity/message.entity.js';
 import { IMessage } from '../interfaces/message.interface.js';
 import { Message as MessageModel } from '@prisma/client';
 import PrismaService from '../services/prisma.service.js';
@@ -19,14 +18,16 @@ export class MessageRepository implements IMessageRepositoryInterface {
     parentId,
     userId,
     text,
-    filePath,
+    createdAt,
+    file,
   }: IMessage): Promise<MessageModel | null> {
     return this.prismaService.getClient().message.create({
       data: {
         parentId,
         userId,
         text,
-        file: filePath,
+        file,
+        createdAt,
       },
     });
   }

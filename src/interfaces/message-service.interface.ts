@@ -5,6 +5,7 @@ export interface IMessageService {
     parentId,
     userId,
     text,
-    filePath,
+    file,
+    createdAt,
   }: IMessage) => Promise<Message | null>;
 }

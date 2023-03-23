@@ -23,9 +23,10 @@ export default class MessageService implements IMessageService {
     parentId,
     userId,
     text,
-    filePath,
+    file,
+    createdAt,
   }: IMessage): Promise<Message | null> {
-    const newMessage = new Message(parentId, userId, text, filePath);
+    const newMessage = new Message(parentId, userId, text, createdAt, file);
 
     if (await this.messageRepository.create(newMessage)) {
       return newMessage;

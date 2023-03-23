@@ -7,6 +7,7 @@ export class Message {
     private readonly _parentId: number,
     private _userId: number,
     private _text: string,
+    private _createdAt?: string,
     private _file?: string
   ) {}
 
@@ -22,7 +23,11 @@ export class Message {
     return this._text;
   }
 
-  get filePath(): string | undefined {
+  get file(): string | undefined {
     return this._file;
+  }
+
+  get createdAt(): string | undefined {
+    return this._createdAt;
   }
 }

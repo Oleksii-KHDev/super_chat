@@ -78,6 +78,7 @@ export default {
           parentId: 0,
           userId: this.currentUser.id,
           text: message,
+          date: new Date(Date.now()).toISOString(),
         },
       });
     },
