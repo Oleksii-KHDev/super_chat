@@ -20,7 +20,23 @@ export class UserController extends BaseController implements IController {
       return next(createError(401, 'Invalid credentials'));
     }
 
-    this.sendJson(res, 200, { status: 'ok', message: 'User logged in' });
+    const user = await this.userService.getUserInfo(req.body.login);
+
+    if (!user) {
+      return next(createError(500, "Can't retrieve user information from DB"));
+    }
+
+    const resp = {
+      status: 'ok',
+      user: {
+        id: user.id,
+        login: user.login,
+        name: user.name,
+        homePage: user.homeUrl,
+      },
+    };
+
+    this.sendJson(res, 200, resp);
   }
 
   async register(

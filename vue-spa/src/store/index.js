@@ -14,8 +14,15 @@ export default createStore({
     messages(state) {
       return state.chatMessages;
     },
+    currentUser(state) {
+      return state.user;
+    },
   },
-  mutations: {},
+  mutations: {
+    set_user(state, user) {
+      state.user = user;
+    },
+  },
   actions: {},
   modules: {},
 });

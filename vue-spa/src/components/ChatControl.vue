@@ -28,13 +28,15 @@
     <div class="mt-2 d-flex">
       <textarea
         rows="2"
+        v-model="message"
         placeholder="Please type your message ..."
         class="px-3 p-2 form-control chatbox"
-        @keyup.enter="sendMessage"
+        @keyup.enter="sendMessage($event.target.value)"
       ></textarea>
       <button
         type="button"
         class="btn btn-primary send-btn align-self-center ms-2"
+        @click="sendMessage(message)"
       >
         Send
       </button>
@@ -52,8 +54,20 @@
 <script>
 export default {
   name: 'ChatControl',
+  data() {
+    return {
+      message: '',
+    };
+  },
   methods: {
-    sendMessage() {},
+    sendMessage(message) {
+      if (message && !/^\s*$/.test(message)) {
+        this.$emit('sendMessage', message);
+        return;
+      }
+
+      console.warn("Message can't be empty");
+    },
   },
 };
 </script>

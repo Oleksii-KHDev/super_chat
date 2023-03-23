@@ -4,3 +4,5 @@ export const CORS_SETTINGS = {
   preflightContinue: false,
   optionsSuccessStatus: 204,
 };
+
+export const RETURNS_MESSAGE_COUNT = 100;

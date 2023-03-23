@@ -55,13 +55,13 @@ export default class UserService implements IUserService {
     }
 
     let { homePage } = existedUser;
-    const { name } = existedUser;
+    const { name, id } = existedUser;
 
     if (!homePage) {
       homePage = '';
     }
 
-    return new User(login, name, undefined, homePage);
+    return new User(login, name, undefined, homePage, id);
   }
 
   async validateUser({
