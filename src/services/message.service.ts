@@ -1,7 +1,7 @@
 import { IMessageService } from '../interfaces/message-service.interface.js';
 import { Message } from '../entity/message.entity.js';
-import { IMessage } from '../interfaces/message.interface.js';
 import { IMessageRepositoryInterface } from '../interfaces/message-repository.interface.js';
+import { IChatMessage } from '../interfaces/chat-message.interface.js';
 
 /**
  * Service for working with messages
@@ -24,12 +24,29 @@ export default class MessageService implements IMessageService {
     userId,
     text,
     file,
+    padding,
     createdAt,
-  }: IMessage): Promise<Message | null> {
-    const newMessage = new Message(parentId, userId, text, createdAt, file);
+    user,
+  }: IChatMessage): Promise<IChatMessage | null> {
+    const newMessage = new Message(
+      parentId,
+      userId,
+      text,
+      padding,
+      createdAt,
+      file
+    );
 
     if (await this.messageRepository.create(newMessage)) {
-      return newMessage;
+      return {
+        parentId,
+        userId,
+        text,
+        file,
+        padding,
+        createdAt,
+        user,
+      };
     } else {
       return null;
     }

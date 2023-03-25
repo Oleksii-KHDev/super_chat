@@ -12,25 +12,8 @@
         </p>
       </div>
       <div class="messages">
-        <div
-          v-for="msg in chatMessages"
-          :key="msg.id"
-          class="d-flex gap-2 w-75 mb-4 bubble"
-          :class="{ self: currentUser.id === msg.user.id }"
-        >
-          <img
-            :src="msg?.avatar || avatar1"
-            width="50"
-            height="50"
-            alt="avatar"
-          />
-          <div class="text">
-            <div class="username fw-bold">{{ msg.user.name }}</div>
-            <div class="chatfield p-2">
-              <span v-html="msg.message.text"></span>
-            </div>
-          </div>
-        </div>
+        <ChatMessage v-for="msg in chatMessages" :key="msg.id" :message="msg">
+        </ChatMessage>
       </div>
     </div>
     <ChatControl @send-message="sendMessage"></ChatControl>
@@ -39,17 +22,18 @@
 
 <script>
 import ChatControl from '@/components/ChatControl.vue';
+import ChatMessage from '@/components/ChatMessage.vue';
 import io from 'socket.io-client';
 
 export default {
   data() {
     return {
-      avatar1: '../avatar1.svg',
-      chatName: this.$store.getters.chatName,
+      chatName: '',
       chatMessages: [],
       noMessagesText: 'There are no messages in the chat',
       socket: {},
       currentUser: this.$store.getters.currentUser,
+      messageBundle: 1,
     };
   },
   created() {
@@ -58,6 +42,8 @@ export default {
     );
     this.socket.on('newMessage', this.newMessage);
     this.socket.on('chatInit', this.initChat);
+    this.chatName = this.$store.getters.appName;
+    console.log(this.chatName);
   },
   provide() {
     return {
@@ -67,6 +53,7 @@ export default {
   methods: {
     initChat(messages) {
       this.chatMessages = messages;
+      this.messageBundle = 1;
     },
     getSocketConnection() {
       return this.socket;
@@ -74,12 +61,11 @@ export default {
     sendMessage(message) {
       this.socket.emit('newMessage', {
         user: this.currentUser,
-        message: {
-          parentId: 0,
-          userId: this.currentUser.id,
-          text: message,
-          date: new Date(Date.now()).toISOString(),
-        },
+        parentId: 0,
+        userId: this.currentUser.id,
+        text: message,
+        date: new Date(Date.now()).toISOString(),
+        padding: 0,
       });
     },
     newMessage(message) {
@@ -89,6 +75,7 @@ export default {
   },
   components: {
     ChatControl,
+    ChatMessage,
   },
   name: 'ChatRoom',
 };
@@ -96,7 +83,7 @@ export default {
 
 <style scoped>
 h2 {
-  color: purple;
+  color: black;
 }
 .messages {
   position: relative;
@@ -114,38 +101,7 @@ h2 {
   border-radius: 5px;
   background: purple;
 }
-.chatfield {
-  background: purple;
-  color: white;
-  border-radius: 10px;
-  border-top-left-radius: 0;
-}
 
-.self .chatfield {
-  color: black;
-}
-.self .chatfield {
-  border-top-right-radius: 0;
-  border-top-left-radius: 10px;
-}
-.chatfield {
-  font-size: 1rem;
-  width: fit-content;
-}
-.bubble {
-  flex-flow: row;
-}
-.bubble.self {
-  flex-flow: row-reverse;
-}
-.self .chatfield {
-  float: right;
-}
-.self {
-  text-align: right;
-  float: right;
-  flex-flow: row-reverse;
-}
 img {
   -webkit-user-drag: none;
 }

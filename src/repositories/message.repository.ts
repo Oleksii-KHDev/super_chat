@@ -20,6 +20,7 @@ export class MessageRepository implements IMessageRepositoryInterface {
     text,
     createdAt,
     file,
+    padding,
   }: IMessage): Promise<MessageModel | null> {
     return this.prismaService.getClient().message.create({
       data: {
@@ -27,6 +28,7 @@ export class MessageRepository implements IMessageRepositoryInterface {
         userId,
         text,
         file,
+        padding,
         createdAt,
       },
     });
