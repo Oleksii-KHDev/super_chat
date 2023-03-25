@@ -24,6 +24,7 @@ model Message {
   userId   Int @map("user_id")
   text     String
   file     String?
+  padding  Int @default(0)
   createdAt  DateTime   @default(now()) @map("created_at")
   user     User   @relation(fields: [userId], references: [id])
 

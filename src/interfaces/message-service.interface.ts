@@ -1,11 +1,12 @@
-import { Message } from '../entity/message.entity.js';
-import { IMessage } from './message.interface.js';
+import { IChatMessage } from './chat-message.interface.js';
 export interface IMessageService {
   createMessage: ({
     parentId,
     userId,
     text,
     file,
+    padding,
     createdAt,
-  }: IMessage) => Promise<Message | null>;
+    user,
+  }: IChatMessage) => Promise<IChatMessage | null>;
 }

@@ -7,8 +7,9 @@ export class Message {
     private readonly _parentId: number,
     private _userId: number,
     private _text: string,
-    private _createdAt?: string,
-    private _file?: string
+    private _padding?: number,
+    private _createdAt?: Date,
+    private _file?: string | null
   ) {}
 
   get parentId(): number {
@@ -23,11 +24,15 @@ export class Message {
     return this._text;
   }
 
-  get file(): string | undefined {
+  get file(): string | undefined | null {
     return this._file;
   }
 
-  get createdAt(): string | undefined {
+  get createdAt(): Date | undefined {
     return this._createdAt;
+  }
+
+  get padding(): number | undefined {
+    return this._padding;
   }
 }

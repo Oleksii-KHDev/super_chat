@@ -45,8 +45,12 @@ export class ChatSocketServer {
    */
   protected async onNewMessage(message: IChatMessage) {
     console.log(message);
-    await this._messageService.createMessage(message.message);
-    this.socketService?.emit('newMessage', message);
+
+    const newMessage = await this._messageService.createMessage(message);
+
+    if (newMessage) {
+      this.socketService?.emit('newMessage', newMessage);
+    }
   }
 
   protected async getAllMessages({
@@ -70,10 +74,10 @@ export class ChatSocketServer {
         const messages = await this.getAllMessages.call(this, {
           amount: RETURNS_MESSAGE_COUNT,
           offset: 1,
-          sortField: 'created_at',
-          sortOrder: 0,
+          sortField: 'createdAt',
+          sortOrder: 'asc',
         });
-
+        socket.emit('chatInit', messages);
         socket.on('disconnect', () => {
           console.log('Client disconnected');
         });
