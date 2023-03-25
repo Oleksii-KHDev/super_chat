@@ -15,7 +15,7 @@
           <BIconSortAlphaDownAlt class="icon"></BIconSortAlphaDownAlt>
         </div>
         <div class="answer">
-          <BIconReplyFill class="icon"></BIconReplyFill>
+        <BIconReplyFill class="icon"></BIconReplyFill>
         </div>
       </div>
       <div class="chat-field p-2">

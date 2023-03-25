@@ -38,7 +38,7 @@ export default {
   },
   created() {
     this.socket = io(
-      `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`
+      `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`,
     );
     this.socket.on('newMessage', this.newMessage);
     this.socket.on('chatInit', this.initChat);
