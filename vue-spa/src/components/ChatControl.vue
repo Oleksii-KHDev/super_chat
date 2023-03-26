@@ -25,12 +25,22 @@
         <button type="button" class="btn btn-danger">Add File</button>
       </div>
     </div>
+    <div class="d-flex reply-message">
+      <div
+        class="alert alert-primary mb-0 mt-2"
+        v-bind:class="[isShowReplayAlert ? 'show' : 'hide']"
+      >
+        <BIconReplyFill class="icon"></BIconReplyFill>
+        {{ replyHeader ? replyHeader : '' }}
+        <BIconX class="icon icon-close" @click="hideReplayField"></BIconX>
+      </div>
+    </div>
     <div class="mt-2 d-flex">
       <textarea
-        rows="2"
+        rows="replyMessage ? 5 : 2"
         v-model="message"
         placeholder="Please type your message ..."
-        class="px-3 p-2 form-control chatbox"
+        class="px-3 p-2 form-control chat-box"
         @keyup.enter="sendMessage($event.target.value)"
       ></textarea>
       <button
@@ -52,28 +62,62 @@
 </template>
 
 <script>
+import { BIconReplyFill, BIconX } from 'bootstrap-icons-vue';
+
 export default {
   name: 'ChatControl',
+  emits: ['sendMessage'],
+  props: ['replyMessage'],
+  components: { BIconReplyFill, BIconX },
   data() {
     return {
       message: '',
+      replyHeader: '',
+      isShowReplayAlert: false,
+      isReplayAlertClosed: false,
     };
   },
+  beforeUpdate() {
+    if (this.replyMessage) {
+      this.replyHeader = `${this.replyMessage.user.name} ${new Date(
+        this.replyMessage.createdAt
+      ).toLocaleString()} ${this.replyMessage.user.email}`;
+    }
+
+    if (this.isReplayAlertClosed || !this.replyMessage) {
+      this.isShowReplayAlert = false;
+      this.isReplayAlertClosed = false;
+    } else {
+      this.isShowReplayAlert = true;
+    }
+  },
+  computed: {},
   methods: {
     sendMessage(message) {
       if (message && !/^\s*$/.test(message)) {
-        this.$emit('sendMessage', message);
+        this.message = '';
+        const data = { message };
+
+        if (this.replyMessage && this.isShowReplayAlert) {
+          data.parentMessage = this.replyMessage;
+        }
+
+        this.$emit('sendMessage', data);
         return;
       }
 
       console.warn("Message can't be empty");
+    },
+    hideReplayField() {
+      this.isShowReplayAlert = false;
+      this.isReplayAlertClosed = true;
     },
   },
 };
 </script>
 
 <style scoped>
-.chatbox {
+.chat-box {
   outline: none;
   border: 1px dotted lightblue;
   border-radius: 10px;
@@ -92,5 +136,36 @@ export default {
 .send-btn {
   padding: 5px 10px;
   height: 50%;
+}
+
+.alert {
+  padding: 0.5rem;
+}
+
+.show {
+  display: flex;
+}
+
+.hide {
+  display: none;
+}
+
+.icon {
+  font-size: 1.5rem;
+
+  margin-left: 2px;
+}
+
+.icon-close {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.icon-close:hover {
+  color: red;
+}
+
+.reply-message {
+  font-weight: bold;
 }
 </style>

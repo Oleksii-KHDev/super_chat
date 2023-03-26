@@ -5,7 +5,6 @@ import { IGetMessageParam } from '../interfaces/get-message-param.interface.js';
 import { SortField, SortOrder } from '../types/message.types.js';
 export class ChatService implements IChatService {
   private _client;
-  private _chatMessages: IChatMessage[] = [];
   constructor(private readonly _prismaService: PrismaService) {
     this._client = _prismaService.getClient();
   }
@@ -24,6 +23,7 @@ export class ChatService implements IChatService {
     sortField,
     sortOrder,
   }: IGetMessageParam): Promise<IChatMessage[]> {
+    const chatMessages = [];
     const rootMessages = await this.getMessagesFromDataSource(
       0,
       sortField,
@@ -32,7 +32,7 @@ export class ChatService implements IChatService {
 
     if (rootMessages.length > 0) {
       for (const rootMessage of rootMessages) {
-        this._chatMessages.push(rootMessage);
+        chatMessages.push(rootMessage);
         const messages = await this.getMessagesFromDataSource(
           rootMessage.id,
           sortField,
@@ -44,13 +44,14 @@ export class ChatService implements IChatService {
             sortField,
             sortOrder,
             amount * offset,
+            chatMessages,
             messages
           );
         }
       }
     }
 
-    return this._chatMessages;
+    return chatMessages;
   }
 
   /**
@@ -62,21 +63,28 @@ export class ChatService implements IChatService {
     sortField: SortField,
     sortOrder: SortOrder,
     maxCount: number,
-    chatMessages?: IChatMessage[]
+    chatMessages: IChatMessage[],
+    messages: IChatMessage[]
   ): Promise<void> {
-    if (!chatMessages || this._chatMessages.length > maxCount) {
+    if (!messages || chatMessages.length > maxCount) {
       return;
     }
 
-    for (const msg of chatMessages) {
-      this._chatMessages.push(msg);
+    for (const msg of messages) {
       if (msg) {
+        chatMessages.push(msg);
         const messages = await this.getMessagesFromDataSource(
           msg.id as number,
           sortField,
           sortOrder
         );
-        await this.getMessages(sortField, sortOrder, maxCount, messages);
+        await this.getMessages(
+          sortField,
+          sortOrder,
+          maxCount,
+          chatMessages,
+          messages
+        );
       }
     }
   }
