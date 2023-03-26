@@ -30,7 +30,7 @@ export class UserController extends BaseController implements IController {
       status: 'ok',
       user: {
         id: user.id,
-        login: user.login,
+        email: user.login,
         name: user.name,
         homePage: user.homeUrl,
       },

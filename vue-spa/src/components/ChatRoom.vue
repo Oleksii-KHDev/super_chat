@@ -12,11 +12,16 @@
         </p>
       </div>
       <div class="messages">
-        <ChatMessage v-for="msg in chatMessages" :key="msg.id" :message="msg">
+        <ChatMessage
+          v-for="msg in chatMessages"
+          :key="msg.id"
+          :message="msg"
+          @reply="replyMessage"
+        >
         </ChatMessage>
       </div>
     </div>
-    <ChatControl @send-message="sendMessage"></ChatControl>
+    <ChatControl @send-message="sendMessage" :reply-message="replayMessage"></ChatControl>
   </div>
 </template>
 
@@ -34,16 +39,16 @@ export default {
       socket: {},
       currentUser: this.$store.getters.currentUser,
       messageBundle: 1,
+      replayMessage: undefined,
     };
   },
   created() {
     this.socket = io(
       `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`,
     );
-    this.socket.on('newMessage', this.newMessage);
+    this.socket.on('updateChat', this.updateChat);
     this.socket.on('chatInit', this.initChat);
     this.chatName = this.$store.getters.appName;
-    console.log(this.chatName);
   },
   provide() {
     return {
@@ -58,19 +63,24 @@ export default {
     getSocketConnection() {
       return this.socket;
     },
-    sendMessage(message) {
-      this.socket.emit('newMessage', {
+    sendMessage(data) {
+      const message = {
         user: this.currentUser,
-        parentId: 0,
+        parentId: data.parentMessage ? data.parentMessage.id : 0,
         userId: this.currentUser.id,
-        text: message,
-        date: new Date(Date.now()).toISOString(),
-        padding: 0,
-      });
+        text: data.message,
+        createdAt: new Date(Date.now()).toISOString(),
+        padding: data.parentMessage ? +data.parentMessage.padding + 1 : 0,
+      };
+      this.socket.emit('newMessage', message);
+      this.replayMessage = undefined;
     },
-    newMessage(message) {
-      console.log(message);
-      this.chatMessages.push(message);
+    replyMessage(message) {
+      this.replayMessage = message;
+    },
+    updateChat(messages) {
+      this.chatMessages = messages;
+      // this.chatMessages.unshift(message);
     },
   },
   components: {

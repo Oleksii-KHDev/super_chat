@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex gap-2 w-75 mb-4 bubble">
+  <div class="d-flex gap-2 w-75 mb-4 bubble" :style="{ marginLeft: (padding * 5) + '%' }">
     <img :src="avatar1" width="50" height="50" alt="avatar" />
     <div class="text">
       <div class="text-header">
@@ -15,7 +15,7 @@
           <BIconSortAlphaDownAlt class="icon"></BIconSortAlphaDownAlt>
         </div>
         <div class="answer">
-        <BIconReplyFill class="icon"></BIconReplyFill>
+        <BIconReplyFill class="icon" @click="reply"></BIconReplyFill>
         </div>
       </div>
       <div class="chat-field p-2">
@@ -37,6 +37,7 @@ import {
 export default {
   name: 'ChatMessage',
   props: ['message'],
+  emits: ['reply'],
   components: {
     BIconReplyFill,
     BIconSortNumericDown,
@@ -47,7 +48,20 @@ export default {
   data() {
     return {
       avatar1: 'assets/avatar1.svg',
+      msg: this.message,
+      padding: 0,
     };
+  },
+  created() {
+    this.padding = this.message.padding;
+  },
+  beforeUpdate() {
+    this.padding = this.message.padding;
+  },
+  methods: {
+    reply() {
+      this.$emit('reply', this.message);
+    },
   },
 };
 </script>
