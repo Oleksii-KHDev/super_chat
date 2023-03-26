@@ -98,7 +98,7 @@ export default {
       rules: [
         (v) => {
           if (v && v.length > 0 && v[0].name.trim().endsWith('.txt')) {
-            return (v[0].size < 102400) ? true : 'Text file can\'t be over 100 Kb';
+            return v[0].size < 102400 ? true : "Text file can't be over 100 Kb";
           }
           return true;
         },
@@ -151,8 +151,9 @@ export default {
 };
 </script>
 <style>
-.v-input .v-input__control, .v-input__details {
-  max-width: 30%!important;
+.v-input .v-input__control,
+.v-input__details {
+  max-width: 30% !important;
 }
 </style>
 <style scoped>
