@@ -1,5 +1,5 @@
 import { Server } from 'node:http';
-import { Server as SocketServer } from 'socket.io';
+import { Server as SocketServer, Socket } from 'socket.io';
 import { CORS_SETTINGS, RETURNS_MESSAGE_COUNT } from './constants.js';
 import { IChatMessage } from './interfaces/chat-message.interface.js';
 import { IMessageService } from './interfaces/message-service.interface.js';
@@ -9,6 +9,10 @@ import PrismaService from './services/prisma.service.js';
 import { ChatService } from './services/chat.service.js';
 import { IChatService } from './interfaces/chat-service.interface.js';
 import { IGetMessageParam } from './interfaces/get-message-param.interface.js';
+import { getPublicUrl } from './helpers/index.js';
+import { mkdir } from 'node:fs/promises';
+import { writeFile } from 'node:fs';
+
 export class ChatSocketServer {
   protected socketService?: SocketServer;
   private readonly _messageService: IMessageService;
@@ -40,10 +44,11 @@ export class ChatSocketServer {
   /**
    * Save message and send broadcast to all clients
    *
+   * @param socket
    * @param message New message from the chat
    * @private
    */
-  protected async onNewMessage(message: IChatMessage) {
+  protected async onNewMessage(socket: Socket, message: IChatMessage) {
     const newMessage = await this._messageService.createMessage(message);
     if (newMessage) {
       const messages = await this.getAllMessages({
@@ -53,7 +58,31 @@ export class ChatSocketServer {
         sortOrder: 'desc',
       });
 
-      this.socketService?.emit('updateChat', messages);
+      if (message.fileSource) {
+        try {
+          const filePath = `${getPublicUrl()}/${newMessage.id}`;
+          await mkdir(filePath, { recursive: true });
+          writeFile(
+            `${filePath}/${newMessage.file}`,
+            message.fileSource,
+            (err) => {
+              if (err) {
+                socket.emit(
+                  'messageError',
+                  'Error during receiving message file'
+                );
+                return;
+              }
+
+              this.socketService?.emit('updateChat', messages);
+            }
+          );
+        } catch (err) {
+          socket.emit('messageError', 'Error during receiving message file');
+        }
+      } else {
+        this.socketService?.emit('updateChat', messages);
+      }
     }
   }
 
@@ -86,7 +115,7 @@ export class ChatSocketServer {
           console.log('Client disconnected');
         });
 
-        socket.on('newMessage', await this.onNewMessage.bind(this));
+        socket.on('newMessage', this.onNewMessage.bind(this, socket));
       });
     }
   }

@@ -5,26 +5,45 @@
       role="toolbar"
       aria-label="Toolbar with tag buttons"
     >
-      <div class="btn-group me-2" role="group" aria-label="Button for tag a">
+      <div
+        class="btn-group me-2 align-self-center"
+        role="group"
+        aria-label="Button for tag a"
+      >
         <button type="button" class="btn btn-warning">&lt;a&gt;</button>
       </div>
-      <div class="btn-group me-2" role="group" aria-label="Button for tag code">
+      <div
+        class="btn-group me-2 align-self-center"
+        role="group"
+        aria-label="Button for tag code"
+      >
         <button type="button" class="btn btn-secondary">&lt;code&gt;</button>
       </div>
-      <div class="btn-group me-2" role="group" aria-label="Button for tag i">
+      <div
+        class="btn-group me-2 align-self-center"
+        role="group"
+        aria-label="Button for tag i"
+      >
         <button type="button" class="btn btn-info">&lt;i&gt;</button>
       </div>
       <div
-        class="btn-group me-2"
+        class="btn-group me-2 align-self-center"
         role="group"
         aria-label="Button for tag strong"
       >
         <button type="button" class="btn btn-success">&lt;strong&gt;</button>
       </div>
-      <div class="btn-group" role="group" aria-label="Button for adding file">
-        <button type="button" class="btn btn-danger">Add File</button>
-      </div>
+      <v-file-input
+        accept=".jpg, .jpeg, .png, .txt, .gif"
+        label="Add file"
+        show-size
+        counter
+        validate-on="input"
+        :rules="rules"
+        v-model="file"
+      ></v-file-input>
     </div>
+
     <div class="d-flex reply-message">
       <div
         class="alert alert-primary mb-0 mt-2"
@@ -75,14 +94,25 @@ export default {
       replyHeader: '',
       isShowReplayAlert: false,
       isReplayAlertClosed: false,
+      file: null,
+      rules: [
+        (v) => {
+          if (v && v.length > 0 && v[0].name.trim().endsWith('.txt')) {
+            return (v[0].size < 102400) ? true : 'Text file can\'t be over 100 Kb';
+          }
+          return true;
+        },
+      ],
     };
   },
   beforeUpdate() {
+    /* eslint-disable comma-dangle */
     if (this.replyMessage) {
       this.replyHeader = `${this.replyMessage.user.name} ${new Date(
         this.replyMessage.createdAt
       ).toLocaleString()} ${this.replyMessage.user.email}`;
     }
+    /* eslint-enable comma-dangle */
 
     if (this.isReplayAlertClosed || !this.replyMessage) {
       this.isShowReplayAlert = false;
@@ -102,6 +132,11 @@ export default {
           data.parentMessage = this.replyMessage;
         }
 
+        if (this.file?.length > 0) {
+          // eslint-disable-next-line prefer-destructuring
+          data.fileSource = this.file[0];
+        }
+
         this.$emit('sendMessage', data);
         return;
       }
@@ -115,7 +150,11 @@ export default {
   },
 };
 </script>
-
+<style>
+.v-input .v-input__control, .v-input__details {
+  max-width: 30%!important;
+}
+</style>
 <style scoped>
 .chat-box {
   outline: none;
@@ -167,5 +206,15 @@ export default {
 
 .reply-message {
   font-weight: bold;
+}
+
+.btn-group {
+  height: 50%;
+}
+
+.btn-group .btn {
+  font-weight: 600;
+  font-size: 1rem;
+  color: black;
 }
 </style>

@@ -6,8 +6,7 @@ import { UserController } from './controllers/userController.js';
 import { MessageController } from './controllers/message.controller.js';
 import PrismaService from './services/prisma.service.js';
 import process from 'node:process';
-import path from 'node:path';
-import * as url from 'url';
+import { getPublicUrl } from './helpers/index.js';
 import chalk from 'chalk';
 import dedent from 'dedent';
 import cors from 'cors';
@@ -52,8 +51,7 @@ export class App {
   }
 
   protected useStaticPath() {
-    const dirname = url.fileURLToPath(new URL('.', import.meta.url));
-    const publicPath = path.join(dirname, '../client');
+    const publicPath = getPublicUrl();
     this.app.use(express.static(publicPath));
   }
 

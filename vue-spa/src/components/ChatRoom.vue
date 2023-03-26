@@ -47,7 +47,7 @@ export default {
   },
   created() {
     this.socket = io(
-      `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`
+      `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`,
     );
     this.socket.on('updateChat', this.updateChat);
     this.socket.on('chatInit', this.initChat);
@@ -74,6 +74,8 @@ export default {
         text: data.message,
         createdAt: new Date(Date.now()).toISOString(),
         padding: data.parentMessage ? +data.parentMessage.padding + 1 : 0,
+        file: data.fileSource ? data.fileSource.name : undefined,
+        fileSource: data.fileSource ? data.fileSource : undefined,
       };
       this.socket.emit('newMessage', message);
       this.replayMessage = undefined;

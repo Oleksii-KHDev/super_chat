@@ -24,6 +24,18 @@
       <div class="chat-field p-2">
         <span v-html="message.text"></span>
       </div>
+      <div class="message-file" v-if="msg.file">
+        <BIconFileEarmarkImage
+          class="icon"
+          v-if="!msg.file.endsWith('.txt')"
+        ></BIconFileEarmarkImage>
+        <BIconFileEarmarkFont class="icon" v-else></BIconFileEarmarkFont>
+        <a
+          :data-lightbox="msg.id"
+          :href="serverUrl + '/' + msg.id + '/' + msg.file"
+          >{{ msg.file }}</a
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -35,6 +47,8 @@ import {
   BIconSortNumericDownAlt,
   BIconSortAlphaDown,
   BIconSortAlphaDownAlt,
+  BIconFileEarmarkFont,
+  BIconFileEarmarkImage,
 } from 'bootstrap-icons-vue';
 
 export default {
@@ -47,16 +61,20 @@ export default {
     BIconSortNumericDownAlt,
     BIconSortAlphaDown,
     BIconSortAlphaDownAlt,
+    BIconFileEarmarkFont,
+    BIconFileEarmarkImage,
   },
   data() {
     return {
       avatar1: 'assets/avatar1.svg',
       msg: this.message,
       padding: 0,
+      serverUrl: this.$store.getters.serverUrl,
     };
   },
   created() {
     this.padding = this.message.padding;
+    // this.serverUrl = this.$store.getters.serverUrl
   },
   beforeUpdate() {
     this.padding = this.message.padding;
@@ -93,6 +111,7 @@ export default {
   background: lightgray;
   border-radius: 5px;
   padding: 5px;
+  width: fit-content;
 }
 
 .username {

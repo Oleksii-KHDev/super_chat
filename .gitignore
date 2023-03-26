@@ -114,3 +114,5 @@ dist
 
 #Prisma DB journal
 /prisma/super_chat.db-journal
+
+/client

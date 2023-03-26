@@ -36,8 +36,8 @@ export default class MessageService implements IMessageService {
       createdAt,
       file
     );
-
-    if (await this.messageRepository.create(newMessage)) {
+    const msg = await this.messageRepository.create(newMessage);
+    if (msg) {
       return {
         parentId,
         userId,
@@ -46,6 +46,7 @@ export default class MessageService implements IMessageService {
         padding,
         createdAt,
         user,
+        id: msg.id,
       };
     } else {
       return null;

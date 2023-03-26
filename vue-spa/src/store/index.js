@@ -6,6 +6,7 @@ export default createStore({
     appName: name,
     chatMessages: [],
     user: {},
+    serverUrl: `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`,
   },
   getters: {
     appName(state) {
@@ -16,6 +17,9 @@ export default createStore({
     },
     currentUser(state) {
       return state.user;
+    },
+    serverUrl(state) {
+      return state.serverUrl;
     },
   },
   mutations: {

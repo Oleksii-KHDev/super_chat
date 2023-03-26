@@ -6,4 +6,5 @@ export interface IMessage {
   createdAt?: Date;
   file?: string | null;
   padding?: number;
+  fileSource?: Buffer;
 }
