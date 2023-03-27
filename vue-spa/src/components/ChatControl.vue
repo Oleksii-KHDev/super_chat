@@ -10,28 +10,80 @@
         role="group"
         aria-label="Button for tag a"
       >
-        <button type="button" class="btn btn-warning">&lt;a&gt;</button>
+        <v-btn color="primary" rounded="xl" value="outlined">
+          &lt;a&gt;
+          <v-dialog v-model="dialog" activator="parent" width="25%">
+            <v-card>
+              <v-card-text>
+                <v-text-field
+                  :rules="[rules.linkRequired, rules.linkInvalidFormat]"
+                  validate-on="blur"
+                  single-line
+                  label="Link url"
+                  variant="outlined"
+                  ref="linkUrl"
+                  v-model="linkUrl"
+                ></v-text-field>
+                <v-text-field
+                  :rules="[rules.linkTitleRequired]"
+                  single-line
+                  label="Link title"
+                  variant="outlined"
+                  validate-on="blur"
+                  ref="linkTitle"
+                  v-model="linkTitle"
+                ></v-text-field>
+              </v-card-text>
+              <v-card-actions class="justify-center">
+                <v-btn color="primary" @click="okButtonClick">Ok</v-btn>
+                <v-btn color="primary" @click="cancelButtonClick">Cancel</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-btn>
+        <!--        <button type="button" class="btn btn-warning">&lt;a&gt;</button>-->
       </div>
       <div
         class="btn-group me-2 align-self-center"
         role="group"
         aria-label="Button for tag code"
       >
-        <button type="button" class="btn btn-secondary">&lt;code&gt;</button>
+        <v-btn
+          color="primary"
+          rounded="xl"
+          value="outlined"
+          @click="codeButtonClick"
+        >
+          &lt;code&gt;
+        </v-btn>
       </div>
       <div
         class="btn-group me-2 align-self-center"
         role="group"
         aria-label="Button for tag i"
       >
-        <button type="button" class="btn btn-info">&lt;i&gt;</button>
+        <v-btn
+          color="primary"
+          rounded="xl"
+          value="outlined"
+          @click="iButtonClick"
+        >
+          &lt;i&gt;
+        </v-btn>
       </div>
       <div
         class="btn-group me-2 align-self-center"
         role="group"
         aria-label="Button for tag strong"
       >
-        <button type="button" class="btn btn-success">&lt;strong&gt;</button>
+        <v-btn
+          color="primary"
+          rounded="xl"
+          value="outlined"
+          @click="strongButtonClick"
+        >
+          &lt;strong&gt;
+        </v-btn>
       </div>
       <v-file-input
         accept=".jpg, .jpeg, .png, .txt, .gif"
@@ -39,8 +91,10 @@
         show-size
         counter
         validate-on="input"
-        :rules="rules"
+        :rules="[rules.fileSize]"
         v-model="file"
+        id="messageFile"
+        class="message-file"
       ></v-file-input>
     </div>
 
@@ -61,6 +115,7 @@
         placeholder="Please type your message ..."
         class="px-3 p-2 form-control chat-box"
         @keyup.enter="sendMessage($event.target.value)"
+        ref="messageText"
       ></textarea>
       <button
         type="button"
@@ -90,19 +145,29 @@ export default {
   components: { BIconReplyFill, BIconX },
   data() {
     return {
+      dialog: false,
       message: '',
       replyHeader: '',
       isShowReplayAlert: false,
       isReplayAlertClosed: false,
       file: null,
-      rules: [
-        (v) => {
+      linkUrl: '',
+      linkTitle: '',
+      rules: {
+        linkRequired: (v) => !!v || 'Links url required',
+        linkTitleRequired: (v) => !!v || 'Links title required',
+        linkInvalidFormat: (v) =>
+          /* eslint-disable-next-line implicit-arrow-linebreak */
+          /(https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%\-/]))?/.test(
+            v,
+          ) || 'Invalid link format',
+        fileSize: (v) => {
           if (v && v.length > 0 && v[0].name.trim().endsWith('.txt')) {
-            return v[0].size < 102400 ? true : "Text file can't be over 100 Kb";
+            return v[0].size < 102 ? true : "Text file can't be over 100 Kb";
           }
           return true;
         },
-      ],
+      },
     };
   },
   beforeUpdate() {
@@ -121,8 +186,58 @@ export default {
       this.isShowReplayAlert = true;
     }
   },
-  computed: {},
   methods: {
+    async okButtonClick() {
+      const validLinkUrl = await this.$refs.linkUrl.validate();
+      const validLinkTitle = await this.$refs.linkTitle.validate();
+
+      if (validLinkUrl.length !== 0 || validLinkTitle.length !== 0) {
+        return;
+      }
+
+      this.insertTag('a', this.linkUrl, this.linkTitle);
+      this.dialog = false;
+      this.linkUrl = '';
+      this.linkTitle = '';
+    },
+
+    cancelButtonClick() {
+      this.dialog = false;
+      this.linkUrl = '';
+      this.linkTitle = '';
+    },
+
+    strongButtonClick() {
+      this.insertTag('strong');
+    },
+
+    codeButtonClick() {
+      this.insertTag('code');
+    },
+
+    iButtonClick() {
+      this.insertTag('i');
+    },
+
+    insertTag(tagName, hRef = '', title = '') {
+      const textArea = this.$refs.messageText;
+      const selectedText = this.message.substring(
+        textArea.selectionStart,
+        textArea.selectionEnd,
+      );
+
+      const linkAttrib = hRef && title ? `href="${hRef}" title="${title}` : '';
+
+      if (selectedText) {
+        const replacedText = `<${tagName} ${linkAttrib}>${selectedText}</${tagName}>`;
+        this.message = `${this.message.substring(
+          0,
+          /*  eslint-disable-next-line comma-dangle */
+          textArea.selectionStart
+        )}${replacedText}${this.message.substring(textArea.selectionEnd)}`;
+      }
+    },
+
     sendMessage(message) {
       if (message && !/^\s*$/.test(message)) {
         this.message = '';
@@ -151,9 +266,9 @@ export default {
 };
 </script>
 <style>
-.v-input .v-input__control,
+.v-input.message-file .v-input__control,
 .v-input__details {
-  max-width: 30% !important;
+  max-width: 30%;
 }
 </style>
 <style scoped>
@@ -176,6 +291,12 @@ export default {
 .send-btn {
   padding: 5px 10px;
   height: 50%;
+  color: black;
+  font-weight: bold;
+}
+
+.send-btn:hover {
+  color: #d8d6d6;
 }
 
 .alert {

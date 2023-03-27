@@ -47,6 +47,7 @@ export default {
   },
   created() {
     this.socket = io(
+      /* eslint-disable-next-line comma-dangle */
       `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`
     );
     this.socket.on('updateChat', this.updateChat);
