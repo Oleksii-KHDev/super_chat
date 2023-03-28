@@ -10,38 +10,42 @@
         role="group"
         aria-label="Button for tag a"
       >
-        <v-btn color="primary" rounded="xl" value="outlined">
+        <v-btn
+          color="primary"
+          rounded="xl"
+          value="outlined"
+          @click="aButtonClick"
+        >
           &lt;a&gt;
-          <v-dialog v-model="dialog" activator="parent" width="25%">
-            <v-card>
-              <v-card-text>
-                <v-text-field
-                  :rules="[rules.linkRequired, rules.linkInvalidFormat]"
-                  validate-on="blur"
-                  single-line
-                  label="Link url"
-                  variant="outlined"
-                  ref="linkUrl"
-                  v-model="linkUrl"
-                ></v-text-field>
-                <v-text-field
-                  :rules="[rules.linkTitleRequired]"
-                  single-line
-                  label="Link title"
-                  variant="outlined"
-                  validate-on="blur"
-                  ref="linkTitle"
-                  v-model="linkTitle"
-                ></v-text-field>
-              </v-card-text>
-              <v-card-actions class="justify-center">
-                <v-btn color="primary" @click="okButtonClick">Ok</v-btn>
-                <v-btn color="primary" @click="cancelButtonClick">Cancel</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
         </v-btn>
-        <!--        <button type="button" class="btn btn-warning">&lt;a&gt;</button>-->
+        <v-dialog v-model="dialog" width="25%">
+          <v-card>
+            <v-card-text>
+              <v-text-field
+                :rules="[rules.linkRequired, rules.linkInvalidFormat]"
+                validate-on="blur"
+                single-line
+                label="Link url"
+                variant="outlined"
+                ref="linkUrl"
+                v-model="linkUrl"
+              ></v-text-field>
+              <v-text-field
+                :rules="[rules.linkTitleRequired]"
+                single-line
+                label="Link title"
+                variant="outlined"
+                validate-on="blur"
+                ref="linkTitle"
+                v-model="linkTitle"
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions class="justify-center">
+              <v-btn color="primary" @click="okButtonClick">Ok</v-btn>
+              <v-btn color="primary" @click="cancelButtonClick">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </div>
       <div
         class="btn-group me-2 align-self-center"
@@ -219,6 +223,18 @@ export default {
       this.insertTag('i');
     },
 
+    aButtonClick() {
+      /* eslint-disable operator-linebreak */
+      if (
+        this.$refs.messageText.selectionEnd !== 0 &&
+        this.$refs.messageText.selectionEnd >
+        this.$refs.messageText.selectionStart
+      ) {
+        this.dialog = true;
+      }
+      /* eslint-enable operator-linebreak */
+    },
+
     insertTag(tagName, hRef = '', title = '') {
       const textArea = this.$refs.messageText;
       const selectedText = this.message.substring(
@@ -226,7 +242,7 @@ export default {
         textArea.selectionEnd,
       );
 
-      const linkAttrib = hRef && title ? `href="${hRef}" title="${title}` : '';
+      const linkAttrib = hRef && title ? `href="${hRef}" title="${title}"` : '';
 
       if (selectedText) {
         const replacedText = `<${tagName} ${linkAttrib}>${selectedText}</${tagName}>`;
@@ -241,7 +257,8 @@ export default {
     sendMessage(message) {
       if (message && !/^\s*$/.test(message)) {
         this.message = '';
-        const data = { message };
+        const regEx = /<\s*(?!i|\/i|a|\/a|code|\/code|strong|\/strong).*?>/gi;
+        const data = { message: message.replace(regEx, '') };
 
         if (this.replyMessage && this.isShowReplayAlert) {
           data.parentMessage = this.replyMessage;
@@ -283,10 +300,10 @@ export default {
   width: 100%;
 }
 
-.btn-group .btn {
-  padding: 3px;
-  font-size: 0.8rem;
-}
+/*.btn-group .btn {*/
+/*  padding: 3px;*/
+/*  font-size: 0.8rem;*/
+/*}*/
 
 .send-btn {
   padding: 5px 10px;
