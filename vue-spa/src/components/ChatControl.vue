@@ -462,10 +462,4 @@ export default {
 .btn-group {
   height: 50%;
 }
-
-.btn-group .btn {
-  font-weight: 600;
-  font-size: 1rem;
-  color: black;
-}
 </style>
