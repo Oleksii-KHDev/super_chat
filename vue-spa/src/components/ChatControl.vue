@@ -121,34 +121,53 @@
         @keyup.enter="sendMessage($event.target.value)"
         ref="messageText"
       ></textarea>
-      <button
-        type="button"
-        class="btn btn-primary send-btn align-self-center ms-2"
-        @click="sendMessage(message)"
-      >
-        Send
-      </button>
+      <div class="d-flex flex-column">
+        <button
+          type="button"
+          class="btn btn-primary send-btn ms-2"
+          @click="sendMessage(message)"
+        >
+          Send
+        </button>
+        <div v-html="captchaImg"></div>
+        <v-text-field
+          single-line
+          label="Enter value"
+          variant="outlined"
+          v-model.trim="captchaInputValue"
+        >
+        </v-text-field>
+      </div>
     </div>
-
-    <hr />
-    <p class="mb-0">
-      * You can use tags <strong>&lt;a&gt;</strong>,
-      <strong>&lt;code&gt;</strong>, <strong>&lt;i&gt;</strong>,
-      <strong>&lt;strong&gt;</strong>. Also you can add image or text file.
-    </p>
+    <v-snackbar
+      v-model="isShowError"
+      :timeout="3000"
+      variant="outlined"
+      color="red"
+    >
+      {{ errorMessage }}
+    </v-snackbar>
   </div>
 </template>
 
 <script>
 import { BIconReplyFill, BIconX } from 'bootstrap-icons-vue';
+import svgCaptcha from 'svg-captcha-browser';
 
 export default {
   name: 'ChatControl',
   emits: ['sendMessage'],
   props: ['replyMessage'],
   components: { BIconReplyFill, BIconX },
+
   data() {
     return {
+      emptyTagsList: {},
+      isShowError: false,
+      errorMessage: '',
+      captchaString: '',
+      captchaImg: '',
+      captchaInputValue: '',
       dialog: false,
       message: '',
       replyHeader: '',
@@ -174,6 +193,12 @@ export default {
       },
     };
   },
+
+  created() {
+    this.createCaptcha();
+    this.emptyTagsList = this.$store.getters.emptyTagsList;
+  },
+
   beforeUpdate() {
     /* eslint-disable comma-dangle */
     if (this.replyMessage) {
@@ -190,7 +215,75 @@ export default {
       this.isShowReplayAlert = true;
     }
   },
+
   methods: {
+    async validateClosedTags(text) {
+      let result = true;
+      const regExpOpenTag = /<\s*([^/].*?)\s+.*?>/gi;
+      const regExpOCloseTag = /<\s*\/(.*?)\s*>/gi;
+      const openTags = {};
+      const closeTags = {};
+      const itOpenTags = text.matchAll(regExpOpenTag);
+      const itCloseTags = text.matchAll(regExpOCloseTag);
+      const openTagsValues = Array.from(itOpenTags, (m) => m[1]);
+      const closeTagsValues = Array.from(itCloseTags, (m) => m[1]);
+
+      for (let i = 0; i < openTagsValues.length; i += 1) {
+        if (openTags[openTagsValues[i]]) {
+          openTags[openTagsValues[i]] += 1;
+        } else {
+          openTags[openTagsValues[i]] = 1;
+        }
+      }
+
+      for (let i = 0; i < closeTagsValues.length; i += 1) {
+        if (closeTags[closeTagsValues[i]]) {
+          closeTags[closeTagsValues[i]] += 1;
+        } else {
+          closeTags[closeTagsValues[i]] = 1;
+        }
+      }
+
+      const closeTagsKeys = Object.keys(closeTags);
+
+      for (let i = 0; i < closeTagsKeys.length; i += 1) {
+        if (openTags[closeTagsKeys[i]] !== closeTags[closeTagsKeys[i]]) {
+          result = false;
+          break;
+        }
+
+        delete openTags[closeTagsKeys[i]];
+      }
+
+      if (result) {
+        const openTagsKeys = Object.keys(openTags);
+        for (let i = 0; i < openTagsKeys.length; i += 1) {
+          if (!this.emptyTagsList.has(openTagsKeys[i])) {
+            result = false;
+            break;
+          }
+        }
+      }
+
+      return result;
+    },
+
+    async createCaptcha() {
+      try {
+        await svgCaptcha.loadFont('assets/Roboto-Black.ttf');
+        const c = svgCaptcha.create({
+          size: 5,
+          noise: 10,
+          color: true,
+          ignoreChars: '0o1i',
+        });
+        this.captchaImg = c.data;
+        this.captchaString = c.text;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
     async okButtonClick() {
       const validLinkUrl = await this.$refs.linkUrl.validate();
       const validLinkTitle = await this.$refs.linkTitle.validate();
@@ -228,7 +321,7 @@ export default {
       if (
         this.$refs.messageText.selectionEnd !== 0 &&
         this.$refs.messageText.selectionEnd >
-        this.$refs.messageText.selectionStart
+          this.$refs.messageText.selectionStart
       ) {
         this.dialog = true;
       }
@@ -254,27 +347,46 @@ export default {
       }
     },
 
-    sendMessage(message) {
-      if (message && !/^\s*$/.test(message)) {
-        this.message = '';
-        const regEx = /<\s*(?!i|\/i|a|\/a|code|\/code|strong|\/strong).*?>/gi;
-        const data = { message: message.replace(regEx, '') };
-
-        if (this.replyMessage && this.isShowReplayAlert) {
-          data.parentMessage = this.replyMessage;
-        }
-
-        if (this.file?.length > 0) {
-          // eslint-disable-next-line prefer-destructuring
-          data.fileSource = this.file[0];
-        }
-
-        this.$emit('sendMessage', data);
+    async sendMessage(message) {
+      if (!message || /^\s*$/.test(message)) {
+        this.errorMessage = "Message can't be empty";
+        this.isShowError = true;
         return;
       }
 
-      console.warn("Message can't be empty");
+      if (this.captchaInputValue !== this.captchaString) {
+        this.errorMessage = 'Incorrect captcha value';
+        this.isShowError = true;
+        await this.createCaptcha();
+        return;
+      }
+
+      if (!(await this.validateClosedTags(message))) {
+        this.errorMessage = 'Invalid HTML';
+        this.isShowError = true;
+        return;
+      }
+
+      this.message = '';
+      /*  eslint-disable-next-line operator-linebreak */
+      const regEx =
+        /<\s*(?!(i\s.*>)|(\/i\s*?>)|(a.*?>)|(\/a\s*?>)|code|\/code|strong|\/strong).*?>/gi;
+      const data = { message: message.replace(regEx, '') };
+
+      if (this.replyMessage && this.isShowReplayAlert) {
+        data.parentMessage = this.replyMessage;
+      }
+
+      if (this.file?.length > 0) {
+        // eslint-disable-next-line prefer-destructuring
+        data.fileSource = this.file[0];
+      }
+
+      this.$emit('sendMessage', data);
+      await this.createCaptcha();
+      this.captchaInputValue = '';
     },
+
     hideReplayField() {
       this.isShowReplayAlert = false;
       this.isReplayAlertClosed = true;
@@ -306,7 +418,7 @@ export default {
 /*}*/
 
 .send-btn {
-  padding: 5px 10px;
+  padding: 10px;
   height: 50%;
   color: black;
   font-weight: bold;

@@ -16,6 +16,7 @@
     "core-js": "^3.8.3",
     "lightbox2": "^2.11.4",
     "socket.io-client": "^4.6.1",
+    "svg-captcha-browser": "^1.0.2",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuetify": "^3.1.11",
