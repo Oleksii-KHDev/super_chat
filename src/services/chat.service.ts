@@ -3,6 +3,7 @@ import { IChatMessage } from '../interfaces/chat-message.interface.js';
 import PrismaService from './prisma.service.js';
 import { IGetMessageParam } from '../interfaces/get-message-param.interface.js';
 import { SortField, SortOrder } from '../types/message.types.js';
+
 export class ChatService implements IChatService {
   private _client;
   constructor(private readonly _prismaService: PrismaService) {
@@ -32,17 +33,21 @@ export class ChatService implements IChatService {
 
     if (rootMessages.length > 0) {
       for (const rootMessage of rootMessages) {
+        if (chatMessages.length >= amount * offset) {
+          break;
+        }
+
         chatMessages.push(rootMessage);
         const messages = await this.getMessagesFromDataSource(
           rootMessage.id,
-          sortField,
-          sortOrder
+          SortField.createdAt,
+          SortOrder.desc
         );
 
         if (messages.length > 0) {
           await this.getMessages(
-            sortField,
-            sortOrder,
+            SortField.createdAt,
+            SortOrder.desc,
             amount * offset,
             chatMessages,
             messages
@@ -51,7 +56,9 @@ export class ChatService implements IChatService {
       }
     }
 
-    return chatMessages;
+    return offset === 1
+      ? chatMessages
+      : chatMessages.splice(0, offset - 1).slice(0, amount);
   }
 
   /**
@@ -72,19 +79,26 @@ export class ChatService implements IChatService {
 
     for (const msg of messages) {
       if (msg) {
+        if (chatMessages.length >= maxCount) {
+          break;
+        }
+
         chatMessages.push(msg);
-        const messages = await this.getMessagesFromDataSource(
+        const subMessages = await this.getMessagesFromDataSource(
           msg.id as number,
           sortField,
           sortOrder
         );
-        await this.getMessages(
-          sortField,
-          sortOrder,
-          maxCount,
-          chatMessages,
-          messages
-        );
+
+        if (subMessages.length > 0) {
+          await this.getMessages(
+            sortField,
+            sortOrder,
+            maxCount,
+            chatMessages,
+            subMessages
+          );
+        }
       }
     }
   }
@@ -94,16 +108,28 @@ export class ChatService implements IChatService {
     sortField: SortField,
     sortOrder: SortOrder
   ) {
-    return this._client.message.findMany({
+    const args = {
       where: {
         parentId: parentId,
       },
-      orderBy: {
-        [sortField]: sortOrder,
-      },
+      orderBy: {},
       include: {
         user: true,
       },
-    });
+    };
+
+    if (sortField === SortField.email) {
+      args.orderBy = {
+        user: {
+          [sortField]: sortOrder,
+        },
+      };
+    } else {
+      args.orderBy = {
+        [sortField]: sortOrder,
+      };
+    }
+
+    return this._client.message.findMany(args);
   }
 }

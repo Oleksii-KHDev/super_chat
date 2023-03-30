@@ -9,13 +9,25 @@
         <div class="username fw-bold">{{ message.user.name }}</div>
         <div class="message-time w-bold">
           {{ new Date(message.createdAt).toLocaleString() }}
-          <BIconSortNumericDown class="icon"></BIconSortNumericDown>
-          <BIconSortNumericDownAlt class="icon"></BIconSortNumericDownAlt>
+          <BIconSortNumericDown
+            class="icon"
+            @click="sort({ sortField: 'createdAt', sortOrder: 'asc' })"
+          ></BIconSortNumericDown>
+          <BIconSortNumericDownAlt
+            class="icon"
+            @click="sort({ sortField: 'createdAt', sortOrder: 'desc' })"
+          ></BIconSortNumericDownAlt>
         </div>
         <div class="user-email">
           {{ message.user.email }}
-          <BIconSortAlphaDown class="icon"></BIconSortAlphaDown>
-          <BIconSortAlphaDownAlt class="icon"></BIconSortAlphaDownAlt>
+          <BIconSortAlphaDown
+            class="icon"
+            @click="sort({ sortField: 'email', sortOrder: 'asc' })"
+          ></BIconSortAlphaDown>
+          <BIconSortAlphaDownAlt
+            class="icon"
+            @click="sort({ sortField: 'email', sortOrder: 'desc' })"
+          ></BIconSortAlphaDownAlt>
         </div>
         <div class="answer">
           <BIconReplyFill class="icon" @click="reply"></BIconReplyFill>
@@ -30,9 +42,14 @@
           v-if="!msg.file.endsWith('.txt')"
         ></BIconFileEarmarkImage>
         <BIconFileEarmarkFont class="icon" v-else></BIconFileEarmarkFont>
-        <a
+        <a v-if="!msg.file.endsWith('.txt')"
           :data-lightbox="msg.id"
           :href="serverUrl + '/' + msg.id + '/' + msg.file"
+          >{{ msg.file }}</a
+        >
+        <a v-else
+          :href="serverUrl + '/' + msg.id + '/' + msg.file"
+           target="_blank"
           >{{ msg.file }}</a
         >
       </div>
@@ -54,7 +71,7 @@ import {
 export default {
   name: 'ChatMessage',
   props: ['message'],
-  emits: ['reply'],
+  emits: ['reply', 'sort'],
   components: {
     BIconReplyFill,
     BIconSortNumericDown,
@@ -82,6 +99,9 @@ export default {
   methods: {
     reply() {
       this.$emit('reply', this.message);
+    },
+    sort(order) {
+      this.$emit('sort', order);
     },
   },
 };

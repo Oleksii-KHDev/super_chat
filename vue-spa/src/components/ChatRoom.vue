@@ -17,6 +17,7 @@
           :key="msg.id"
           :message="msg"
           @reply="replyMessage"
+          @sort="sortChatMessages"
         >
         </ChatMessage>
       </div>
@@ -24,6 +25,7 @@
     <ChatControl
       @send-message="sendMessage"
       :reply-message="replayMessage"
+      ref="chatControl"
     ></ChatControl>
   </div>
 </template>
@@ -36,13 +38,14 @@ import io from 'socket.io-client';
 export default {
   data() {
     return {
-      chatName: '',
+      chatName: this.$store.getters.appName,
       chatMessages: [],
       noMessagesText: 'There are no messages in the chat',
       socket: {},
       currentUser: this.$store.getters.currentUser,
       messageBundle: 1,
       replayMessage: undefined,
+      messagesOrder: this.$store.getters.defaultSortOrder,
     };
   },
   created() {
@@ -50,23 +53,19 @@ export default {
       /* eslint-disable-next-line comma-dangle */
       `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`
     );
+
     this.socket.on('updateChat', this.updateChat);
     this.socket.on('chatInit', this.initChat);
-    this.chatName = this.$store.getters.appName;
+    this.socket.on('chatSorted', this.updateChat);
+    this.socket.on('serverError', this.showServerError);
   },
-  provide() {
-    return {
-      getSocketConnection: this.getSocketConnection,
-    };
-  },
+
   methods: {
     initChat(messages) {
       this.chatMessages = messages;
       this.messageBundle = 1;
     },
-    getSocketConnection() {
-      return this.socket;
-    },
+
     sendMessage(data) {
       const message = {
         user: this.currentUser,
@@ -78,15 +77,25 @@ export default {
         file: data.fileSource ? data.fileSource.name : undefined,
         fileSource: data.fileSource ? data.fileSource : undefined,
       };
-      this.socket.emit('newMessage', message);
+      this.socket.emit('newMessage', message, this.messagesOrder);
       this.replayMessage = undefined;
     },
+
     replyMessage(message) {
       this.replayMessage = message;
     },
+
     updateChat(messages) {
       this.chatMessages = messages;
-      // this.chatMessages.unshift(message);
+    },
+
+    sortChatMessages(order) {
+      this.messagesOrder = order;
+      this.socket.emit('sortMessage', order);
+    },
+
+    showServerError(message) {
+      this.$refs.chatControl.showServerError(message);
     },
   },
   components: {

@@ -1,6 +1,10 @@
 import { Server } from 'node:http';
 import { Server as SocketServer, Socket } from 'socket.io';
-import { CORS_SETTINGS, RETURNS_MESSAGE_COUNT } from './constants.js';
+import {
+  CORS_SETTINGS,
+  RETURNS_MESSAGE_COUNT,
+  DEFAULT_ORDER_SORTING,
+} from './constants.js';
 import { IChatMessage } from './interfaces/chat-message.interface.js';
 import { IMessageService } from './interfaces/message-service.interface.js';
 import MessageService from './services/message.service.js';
@@ -12,6 +16,7 @@ import { IGetMessageParam } from './interfaces/get-message-param.interface.js';
 import { getPublicUrl } from './helpers/index.js';
 import { mkdir } from 'node:fs/promises';
 import { writeFile } from 'node:fs';
+import { ORDER_SORTING } from './types/message.types.js';
 
 export class ChatSocketServer {
   protected socketService?: SocketServer;
@@ -46,16 +51,20 @@ export class ChatSocketServer {
    *
    * @param socket
    * @param message New message from the chat
+   * @param sorting Order sorting
    * @private
    */
-  protected async onNewMessage(socket: Socket, message: IChatMessage) {
+  protected async onNewMessage(
+    socket: Socket,
+    message: IChatMessage,
+    sorting: ORDER_SORTING
+  ) {
     const newMessage = await this._messageService.createMessage(message);
     if (newMessage) {
       const messages = await this.getAllMessages({
         amount: RETURNS_MESSAGE_COUNT,
         offset: 1,
-        sortField: 'createdAt',
-        sortOrder: 'desc',
+        ...sorting,
       });
 
       if (message.fileSource) {
@@ -68,7 +77,7 @@ export class ChatSocketServer {
             (err) => {
               if (err) {
                 socket.emit(
-                  'messageError',
+                  'serverError',
                   'Error during receiving message file'
                 );
                 return;
@@ -78,11 +87,24 @@ export class ChatSocketServer {
             }
           );
         } catch (err) {
-          socket.emit('messageError', 'Error during receiving message file');
+          socket.emit('serverError', 'Error during receiving message file');
         }
       } else {
         this.socketService?.emit('updateChat', messages);
       }
+    }
+  }
+
+  protected async onSortMessages(socket: Socket, sorting: ORDER_SORTING) {
+    try {
+      const messages = await this.getAllMessages({
+        amount: RETURNS_MESSAGE_COUNT,
+        offset: 1,
+        ...sorting,
+      });
+      socket.emit('chatSorted', messages);
+    } catch (err) {
+      socket.emit('serverError', 'Error during receiving messages from server');
     }
   }
 
@@ -107,8 +129,7 @@ export class ChatSocketServer {
         const messages = await this.getAllMessages.call(this, {
           amount: RETURNS_MESSAGE_COUNT,
           offset: 1,
-          sortField: 'createdAt',
-          sortOrder: 'desc',
+          ...DEFAULT_ORDER_SORTING,
         });
         socket.emit('chatInit', messages);
         socket.on('disconnect', () => {
@@ -116,6 +137,7 @@ export class ChatSocketServer {
         });
 
         socket.on('newMessage', this.onNewMessage.bind(this, socket));
+        socket.on('sortMessage', this.onSortMessages.bind(this, socket));
       });
     }
   }

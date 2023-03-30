@@ -25,6 +25,7 @@ export default createStore({
       'track',
       'wbr',
     ]),
+    defaultSortOrder: { sortField: 'createdAt', sortOrder: 'desc' },
   },
   getters: {
     appName(state) {
@@ -41,6 +42,9 @@ export default createStore({
     },
     emptyTagsList(state) {
       return state.emptyTagsList;
+    },
+    defaultSortOrder(state) {
+      return state.defaultSortOrder;
     },
   },
   mutations: {

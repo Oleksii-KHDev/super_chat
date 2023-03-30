@@ -217,6 +217,11 @@ export default {
   },
 
   methods: {
+    showServerError(message) {
+      this.errorMessage = message;
+      this.isShowError = true;
+    },
+
     async validateClosedTags(text) {
       let result = true;
       const regExpOpenTag = /<\s*([^/].*?)\s+.*?>/gi;
@@ -380,6 +385,7 @@ export default {
       if (this.file?.length > 0) {
         // eslint-disable-next-line prefer-destructuring
         data.fileSource = this.file[0];
+        this.file = null;
       }
 
       this.$emit('sendMessage', data);
