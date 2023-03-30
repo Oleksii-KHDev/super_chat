@@ -42,14 +42,16 @@
           v-if="!msg.file.endsWith('.txt')"
         ></BIconFileEarmarkImage>
         <BIconFileEarmarkFont class="icon" v-else></BIconFileEarmarkFont>
-        <a v-if="!msg.file.endsWith('.txt')"
+        <a
+          v-if="!msg.file.endsWith('.txt')"
           :data-lightbox="msg.id"
           :href="serverUrl + '/' + msg.id + '/' + msg.file"
           >{{ msg.file }}</a
         >
-        <a v-else
+        <a
+          v-else
           :href="serverUrl + '/' + msg.id + '/' + msg.file"
-           target="_blank"
+          target="_blank"
           >{{ msg.file }}</a
         >
       </div>
