@@ -118,14 +118,14 @@ export default {
         this.socket.emit(
           'chatPagination',
           this.messageBundle - 1,
-          this.messagesOrder,
+          this.messagesOrder
         );
         this.messageBundle -= 1;
       } else if (direction === 'down') {
         this.socket.emit(
           'chatPagination',
           this.messageBundle + 1,
-          this.messagesOrder,
+          this.messagesOrder
         );
         this.messageBundle += 1;
       }
