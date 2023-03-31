@@ -7,6 +7,12 @@
         class="d-flex flex-column m-auto text-center justify-content-center mb-2 header"
       >
         <h2 class="fw-bold">{{ chatName }}</h2>
+        <div class="logout">
+          <h5><span class="badge bg-secondary">
+            <a @click.prevent="logout" href="#">Logout</a></span>
+          </h5>
+        </div>
+
         <p class="text-muted" v-if="chatMessages.length === 0">
           {{ noMessagesText }}
         </p>
@@ -36,6 +42,14 @@ import ChatMessage from '@/components/ChatMessage.vue';
 import io from 'socket.io-client';
 
 export default {
+  beforeCreate() {
+    if (!localStorage.getItem('super-chat-user')) {
+      this.$router.push('/login');
+    } else {
+      const user = JSON.parse(localStorage.getItem('super-chat-user'));
+      this.$store.commit('set_user', user);
+    }
+  },
   data() {
     return {
       chatName: this.$store.getters.appName,
@@ -61,6 +75,12 @@ export default {
   },
 
   methods: {
+    logout() {
+      localStorage.removeItem('super-chat-user');
+      this.$store.commit('set_user', {});
+      this.$router.push('/login');
+    },
+
     initChat(messages) {
       this.chatMessages = messages;
       this.messageBundle = 1;
@@ -129,5 +149,21 @@ h2 {
 
 img {
   -webkit-user-drag: none;
+}
+
+.chat {
+  position: relative;
+}
+
+.logout {
+  padding-right: 1rem;
+  left: 95%;
+  top: 0;
+  position: absolute;
+}
+
+.badge.bg-secondary {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 </style>

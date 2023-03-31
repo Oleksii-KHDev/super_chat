@@ -155,8 +155,9 @@ export default {
         });
 
         if (resp.status === 'ok') {
-          this.$router.push('/chat');
           this.$store.commit('set_user', resp.user);
+          localStorage.setItem('super-chat-user', JSON.stringify(resp.user));
+          this.$router.push('/chat');
         } else {
           this.isShowFormError = true;
           this.formErrorMessage = resp.message;
