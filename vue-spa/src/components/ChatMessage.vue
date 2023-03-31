@@ -1,4 +1,18 @@
 <template>
+  <v-tooltip v-model="arrowDownTooltip" location="top">
+    <template v-slot:activator="{ props }">
+      <BIconArrowDown
+        v-if="index === messagesInChat - 1"
+        class="pag-arrow"
+        @focusin="arrowDownTooltip = true"
+        @focusout="arrowDownTooltip = false"
+        v-bind="props"
+        @click="$emit('nextPage', 'down')"
+      >
+      </BIconArrowDown>
+    </template>
+    Next page
+  </v-tooltip>
   <div
     class="d-flex gap-2 w-75 mb-4 bubble"
     :style="{ marginLeft: padding * 5 + '%' }"
@@ -57,6 +71,20 @@
       </div>
     </div>
   </div>
+  <v-tooltip v-model="arrowUpTooltip" location="bottom">
+    <template v-slot:activator="{ props }">
+      <BIconArrowUp
+        v-if="index === 0"
+        class="pag-arrow pag-arrow-top"
+        @focusin="arrowUpTooltip = true"
+        @focusout="arrowUpTooltip = false"
+        @click="$emit('nextPage', 'up')"
+        v-bind="props"
+      >
+      </BIconArrowUp>
+    </template>
+    Previous page
+  </v-tooltip>
 </template>
 
 <script>
@@ -68,12 +96,14 @@ import {
   BIconSortAlphaDownAlt,
   BIconFileEarmarkFont,
   BIconFileEarmarkImage,
+  BIconArrowUp,
+  BIconArrowDown,
 } from 'bootstrap-icons-vue';
 
 export default {
   name: 'ChatMessage',
-  props: ['message'],
-  emits: ['reply', 'sort'],
+  props: ['message', 'index'],
+  emits: ['reply', 'sort', 'nextPage'],
   components: {
     BIconReplyFill,
     BIconSortNumericDown,
@@ -82,6 +112,8 @@ export default {
     BIconSortAlphaDownAlt,
     BIconFileEarmarkFont,
     BIconFileEarmarkImage,
+    BIconArrowUp,
+    BIconArrowDown,
   },
   data() {
     return {
@@ -89,15 +121,20 @@ export default {
       msg: this.message,
       padding: 0,
       serverUrl: this.$store.getters.serverUrl,
+      messagesInChat: 0,
+      arrowDownTooltip: false,
+      arrowUpTooltip: false,
     };
   },
   created() {
     this.padding = this.message.padding;
-    // this.serverUrl = this.$store.getters.serverUrl
+    this.messagesInChat = process.env.VUE_APP_MESSAGES_IN_CHAT;
   },
+
   beforeUpdate() {
     this.padding = this.message.padding;
   },
+
   methods: {
     reply() {
       this.$emit('reply', this.message);
@@ -161,5 +198,15 @@ export default {
   padding: 5px;
   margin-left: 5px;
   font-weight: bold;
+}
+.pag-arrow {
+  font-size: 2rem;
+  font-weight: bold;
+  position: absolute;
+  left: 95%;
+  cursor: pointer;
+}
+.pag-arrow-top {
+  top: 2%;
 }
 </style>

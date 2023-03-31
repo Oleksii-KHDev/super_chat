@@ -56,9 +56,12 @@ export class ChatService implements IChatService {
       }
     }
 
-    return offset === 1
-      ? chatMessages
-      : chatMessages.splice(0, offset - 1).slice(0, amount);
+    if (offset === 1) {
+      return chatMessages;
+    } else {
+      chatMessages.splice(0, (offset - 1) * amount);
+      return chatMessages.slice(0, amount);
+    }
   }
 
   /**

@@ -108,6 +108,23 @@ export class ChatSocketServer {
     }
   }
 
+  protected async onChatPagination(
+    socket: Socket,
+    offset: number,
+    sorting: ORDER_SORTING
+  ) {
+    try {
+      const messages = await this.getAllMessages({
+        amount: RETURNS_MESSAGE_COUNT,
+        offset,
+        ...sorting,
+      });
+      socket.emit('updateChat', messages);
+    } catch (err) {
+      socket.emit('serverError', 'Error during receiving messages from server');
+    }
+  }
+
   protected async getAllMessages({
     amount,
     offset,
@@ -138,6 +155,7 @@ export class ChatSocketServer {
 
         socket.on('newMessage', this.onNewMessage.bind(this, socket));
         socket.on('sortMessage', this.onSortMessages.bind(this, socket));
+        socket.on('chatPagination', this.onChatPagination.bind(this, socket));
       });
     }
   }
