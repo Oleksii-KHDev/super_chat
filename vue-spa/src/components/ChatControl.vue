@@ -156,7 +156,7 @@ import { getCaptcha } from '@/helpers/auth';
 
 export default {
   name: 'ChatControl',
-  emits: ['sendMessage'],
+  emits: ['sendMessage', 'deleteReplayMessage'],
   props: ['replyMessage'],
   components: { BIconReplyFill, BIconX },
 
@@ -392,6 +392,8 @@ export default {
     hideReplayField() {
       this.isShowReplayAlert = false;
       this.isReplayAlertClosed = true;
+      // this.$parent.replayMessage = undefined;
+      this.$emit('deleteReplayMessage');
     },
   },
 };

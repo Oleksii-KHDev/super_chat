@@ -5,3 +5,8 @@ export function getPublicUrl(): string {
   const dirname = url.fileURLToPath(new URL('.', import.meta.url));
   return path.join(dirname, '../../client');
 }
+
+export function getFilesUrl(): string {
+  const publicUrl = getPublicUrl();
+  return path.join(publicUrl, './files');
+}

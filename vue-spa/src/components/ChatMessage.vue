@@ -59,12 +59,12 @@
         <a
           v-if="!msg.file.endsWith('.txt')"
           :data-lightbox="msg.id"
-          :href="serverUrl + '/' + msg.id + '/' + msg.file"
+          :href="serverUrl + '/files/' + msg.id + '/' + msg.file"
           >{{ msg.file }}</a
         >
         <a
           v-else
-          :href="serverUrl + '/' + msg.id + '/' + msg.file"
+          :href="serverUrl + '/files/' + msg.id + '/' + msg.file"
           target="_blank"
           >{{ msg.file }}</a
         >

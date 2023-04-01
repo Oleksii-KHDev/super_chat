@@ -13,7 +13,7 @@ import PrismaService from './services/prisma.service.js';
 import { ChatService } from './services/chat.service.js';
 import { IChatService } from './interfaces/chat-service.interface.js';
 import { IGetMessageParam } from './interfaces/get-message-param.interface.js';
-import { getPublicUrl } from './helpers/index.js';
+import { getFilesUrl } from './helpers/index.js';
 import { mkdir } from 'node:fs/promises';
 import { writeFile } from 'node:fs';
 import { ORDER_SORTING } from './types/message.types.js';
@@ -69,7 +69,7 @@ export class ChatSocketServer {
 
       if (message.fileSource) {
         try {
-          const filePath = `${getPublicUrl()}/${newMessage.id}`;
+          const filePath = `${getFilesUrl()}/${newMessage.id}`;
           await mkdir(filePath, { recursive: true });
           writeFile(
             `${filePath}/${newMessage.file}`,

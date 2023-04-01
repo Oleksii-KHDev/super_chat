@@ -6,7 +6,7 @@
       <div
         class="d-flex flex-column m-auto text-center justify-content-center mb-2 header"
       >
-        <h2 class="fw-bold">{{ chatName }}</h2>
+        <h2 class="fw-bold">{{ chatName + '(' + currentUser.name + ')' }}</h2>
         <div class="logout">
           <h5>
             <span class="badge bg-secondary">
@@ -34,6 +34,7 @@
     </div>
     <ChatControl
       @send-message="sendMessage"
+      @delete-replay-message="replayMessage=undefined"
       :reply-message="replayMessage"
       ref="chatControl"
     ></ChatControl>
