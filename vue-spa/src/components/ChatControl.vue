@@ -182,7 +182,7 @@ export default {
         linkInvalidFormat: (v) =>
           /* eslint-disable-next-line implicit-arrow-linebreak */
           /(https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%\-/]))?/.test(
-            v
+            v,
           ) || 'Invalid link format',
         fileSize: (v) => {
           if (v && v.length > 0 && v[0].name.trim().endsWith('.txt')) {
@@ -332,7 +332,7 @@ export default {
       const textArea = this.$refs.messageText;
       const selectedText = this.message.substring(
         textArea.selectionStart,
-        textArea.selectionEnd
+        textArea.selectionEnd,
       );
 
       const linkAttrib = hRef && title ? `href="${hRef}" title="${title}"` : '';

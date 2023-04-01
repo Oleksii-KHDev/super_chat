@@ -267,10 +267,10 @@ export default {
       const nameValidation = this.nameValidation();
       const captchaValidation = this.captchaValidation();
       return (
-        loginValidation
-        && passwordValidation
-        && nameValidation
-        && captchaValidation
+        loginValidation &&
+        passwordValidation &&
+        nameValidation &&
+        captchaValidation
       );
     },
     captchaValidation() {
