@@ -44,13 +44,14 @@
 import ChatControl from '@/components/ChatControl.vue';
 import ChatMessage from '@/components/ChatMessage.vue';
 import io from 'socket.io-client';
+import { getUserFromStorage, removeUserFromStorage } from '@/helpers/auth';
 
 export default {
   beforeCreate() {
-    if (!localStorage.getItem('super-chat-user')) {
+    if (!getUserFromStorage()) {
       this.$router.push('/login');
     } else {
-      const user = JSON.parse(localStorage.getItem('super-chat-user'));
+      const user = JSON.parse(getUserFromStorage());
       this.$store.commit('set_user', user);
     }
   },
@@ -108,7 +109,7 @@ export default {
      * Logouts user. Removes user data from the localStorage.
      */
     logout() {
-      localStorage.removeItem('super-chat-user');
+      removeUserFromStorage();
       this.$store.commit('set_user', {});
       this.$router.push('/login');
     },
@@ -118,14 +119,14 @@ export default {
         this.socket.emit(
           'chatPagination',
           this.messageBundle - 1,
-          this.messagesOrder
+          this.messagesOrder,
         );
         this.messageBundle -= 1;
       } else if (direction === 'down') {
         this.socket.emit(
           'chatPagination',
           this.messageBundle + 1,
-          this.messagesOrder
+          this.messagesOrder,
         );
         this.messageBundle += 1;
       }

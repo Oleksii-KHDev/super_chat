@@ -129,7 +129,7 @@
         >
           Send
         </button>
-        <div v-html="captchaImg"></div>
+        <div class="mt-2 mb-2" v-html="captchaImg"></div>
         <v-text-field
           single-line
           label="Enter value"
@@ -152,7 +152,7 @@
 
 <script>
 import { BIconReplyFill, BIconX } from 'bootstrap-icons-vue';
-import svgCaptcha from 'svg-captcha-browser';
+import { getCaptcha } from '@/helpers/auth';
 
 export default {
   name: 'ChatControl',
@@ -275,17 +275,12 @@ export default {
 
     async createCaptcha() {
       try {
-        await svgCaptcha.loadFont('assets/Roboto-Black.ttf');
-        const c = svgCaptcha.create({
-          size: 5,
-          noise: 10,
-          color: true,
-          ignoreChars: '0o1i',
-        });
+        const c = await getCaptcha();
         this.captchaImg = c.data;
         this.captchaString = c.text;
-      } catch (e) {
-        console.log(e);
+      } catch (err) {
+        this.errorMessage = err.message || 'Can\'t create captcha';
+        this.isShowError = true;
       }
     },
 
@@ -363,6 +358,7 @@ export default {
         this.errorMessage = 'Incorrect captcha value';
         this.isShowError = true;
         await this.createCaptcha();
+        this.captchaInputValue = '';
         return;
       }
 

@@ -13,6 +13,7 @@ model User {
   name     String
   homePage String?    @map("home_page")
   password String
+  avatar   String     @default("assets/avatar1.svg")
   comments Message[]
 
   @@map("users")

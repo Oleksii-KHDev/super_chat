@@ -136,6 +136,68 @@
             />
           </label>
         </div>
+        <div class="mb-3">
+          <div class="form-label">Select your avatar</div>
+          <div class="form-check form-check-inline">
+            <label class="form-check-label" for="avatarRadio1">
+              <input
+                class="form-check-input"
+                type="radio"
+                id="avatarRadio1"
+                value="assets/avatar1.svg"
+                checked
+                v-model="avatar"
+              />
+              <img
+                src="assets/avatar1.svg"
+                width="50"
+                height="50"
+                alt="mens avatar"
+              />
+            </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <label class="form-check-label" for="avatarRadio2">
+              <input
+                class="form-check-input"
+                type="radio"
+                id="avatarRadio2"
+                value="assets/avatar3.svg"
+                v-model="avatar"
+              />
+              <img
+                src="assets/avatar3.svg"
+                width="50"
+                height="50"
+                alt="girls avatar"
+              />
+            </label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="d-flex flex-row">
+            <div v-html="captchaImg"></div>
+            <v-text-field
+              single-line
+              label="Enter value"
+              variant="outlined"
+              v-model.trim="captchaInputValue"
+            >
+            </v-text-field>
+          </div>
+          <div
+            class="alert alert-warning align-items-center form-text"
+            role="alert"
+            v-bind:class="[isShowCaptchaError ? 'show' : 'hide']"
+          >
+            <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:">
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>
+              {{ captchaErrorMessage }}
+            </div>
+          </div>
+        </div>
         <div class="h6 pb-2 mb-4 text-danger border-bottom border-danger">
           * Required fields
         </div>
@@ -155,6 +217,7 @@
 
 <script>
 import RegisterRequest from '@/requests/register/register.request';
+import { getCaptcha, pushUserToStorage } from '@/helpers/auth';
 
 export default {
   data() {
@@ -174,20 +237,51 @@ export default {
       loginErrorMessage: '',
       formErrorMessage: '',
       isShowFormError: '',
+      captchaString: '',
+      captchaImg: '',
+      captchaInputValue: '',
+      isShowCaptchaError: false,
+      captchaErrorMessage: '',
+      avatar: 'assets/avatar1.svg',
     };
   },
+  created() {
+    this.createCaptcha();
+  },
   methods: {
+    async createCaptcha() {
+      const c = await getCaptcha();
+      this.captchaImg = c.data;
+      this.captchaString = c.text;
+    },
     onFocus() {
       if (this.isShowFormError) {
         this.isShowFormError = false;
         this.formErrorMessage = '';
       }
     },
+
     formValidation() {
       const loginValidation = this.loginValidation();
       const passwordValidation = this.passwordValidation();
       const nameValidation = this.nameValidation();
-      return loginValidation && passwordValidation && nameValidation;
+      const captchaValidation = this.captchaValidation();
+      return (
+        loginValidation
+        && passwordValidation
+        && nameValidation
+        && captchaValidation
+      );
+    },
+    captchaValidation() {
+      if (this.captchaString !== this.captchaInputValue.trim()) {
+        this.isShowCaptchaError = true;
+        this.captchaErrorMessage = 'Invalid captcha value';
+        return false;
+      }
+      this.isShowCaptchaError = false;
+      this.captchaErrorMessage = '';
+      return true;
     },
     nameValidation() {
       if (!this.name) {
@@ -255,11 +349,15 @@ export default {
           password: this.password,
           name: this.name,
           homeUrl: this.homePage,
+          avatar: this.avatar,
         });
 
         if (resp.status === 'ok') {
+          this.$store.commit('set_user', resp.user);
+          pushUserToStorage(resp.user);
           this.$router.push('/chat');
         } else {
+          await this.createCaptcha();
           this.isShowFormError = true;
           this.formErrorMessage = resp.message;
         }

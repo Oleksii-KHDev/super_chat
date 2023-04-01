@@ -33,6 +33,7 @@ export class UserController extends BaseController implements IController {
         email: user.login,
         name: user.name,
         homePage: user.homeUrl,
+        avatar: user.avatar,
       },
     };
 
@@ -53,6 +54,13 @@ export class UserController extends BaseController implements IController {
     this.sendJson(res, 200, {
       status: 'ok',
       message: 'User successfully registered',
+      user: {
+        id: result.id,
+        email: result.login,
+        name: result.name,
+        homePage: result.homeUrl,
+        avatar: result.avatar,
+      },
     });
   }
 }

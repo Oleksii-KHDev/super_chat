@@ -19,6 +19,7 @@ export class UsersRepository implements IUserRepositoryInterface {
     password,
     name,
     homeUrl,
+    avatar,
   }: User): Promise<UserModel | null> {
     if (typeof password === 'string') {
       return this.prismaService.getClient().user.create({
@@ -27,6 +28,7 @@ export class UsersRepository implements IUserRepositoryInterface {
           name,
           password,
           homePage: homeUrl,
+          avatar,
         },
       });
     } else {

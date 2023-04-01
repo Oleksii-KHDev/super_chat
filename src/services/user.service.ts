@@ -16,12 +16,14 @@ export default class UserService implements IUserService {
    * @param {string} login user login
    * @param {string} password user password
    * @param {string} name user name
+   * @param {string} avatar user's avatar file
    * @param {string|undefined} homeUrl home url
    */
   async createUser({
     login,
     password,
     name,
+    avatar,
     homeUrl,
   }: {
     [key: string]: string | undefined;
@@ -36,15 +38,20 @@ export default class UserService implements IUserService {
       login as string,
       name as string,
       password as string,
-      homeUrl
+      homeUrl,
+      undefined,
+      avatar as string
     );
     await newUser.createHashPassword(password as string, Number(SALT));
 
-    if (await this.userRepository.create(newUser)) {
-      return newUser;
-    } else {
+    const user = await this.userRepository.create(newUser);
+
+    if (!user) {
       return null;
     }
+
+    newUser.id = user.id;
+    return newUser;
   }
 
   async getUserInfo(login: string): Promise<User | null> {
@@ -55,13 +62,13 @@ export default class UserService implements IUserService {
     }
 
     let { homePage } = existedUser;
-    const { name, id } = existedUser;
+    const { name, id, avatar } = existedUser;
 
     if (!homePage) {
       homePage = '';
     }
 
-    return new User(login, name, undefined, homePage, id);
+    return new User(login, name, undefined, homePage, id, avatar);
   }
 
   async validateUser({

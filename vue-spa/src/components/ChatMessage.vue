@@ -17,7 +17,7 @@
     class="d-flex gap-2 w-75 mb-4 bubble"
     :style="{ marginLeft: padding * 5 + '%' }"
   >
-    <img :src="avatar1" width="50" height="50" alt="avatar" />
+    <img :src="message.user.avatar" width="50" height="50" alt="avatar" />
     <div class="text">
       <div class="text-header">
         <div class="username fw-bold">{{ message.user.name }}</div>
@@ -129,6 +129,7 @@ export default {
   created() {
     this.padding = this.message.padding;
     this.messagesInChat = process.env.VUE_APP_MESSAGES_IN_CHAT;
+    console.log(this.message);
   },
 
   beforeUpdate() {

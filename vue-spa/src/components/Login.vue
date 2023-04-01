@@ -89,6 +89,7 @@
 
 <script>
 import loginRequest from '@/requests/login/login.request';
+import { pushUserToStorage } from '@/helpers/auth';
 
 export default {
   name: 'LoginComponent',
@@ -156,7 +157,7 @@ export default {
 
         if (resp.status === 'ok') {
           this.$store.commit('set_user', resp.user);
-          localStorage.setItem('super-chat-user', JSON.stringify(resp.user));
+          pushUserToStorage(resp.user);
           this.$router.push('/chat');
         } else {
           this.isShowFormError = true;

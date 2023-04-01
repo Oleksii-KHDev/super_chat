@@ -9,7 +9,8 @@ export class User {
     private _name: string,
     private _password?: string,
     private _homeUrl?: string,
-    private _id?: number
+    private _id?: number,
+    private _avatar?: string
   ) {}
 
   get login(): string {
@@ -30,6 +31,14 @@ export class User {
 
   get id(): number | undefined {
     return this._id;
+  }
+
+  set id(id) {
+    this._id = id;
+  }
+
+  get avatar(): string | undefined {
+    return this._avatar;
   }
 
   /**
