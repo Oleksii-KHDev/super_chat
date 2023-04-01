@@ -34,7 +34,7 @@
     </div>
     <ChatControl
       @send-message="sendMessage"
-      @delete-replay-message="replayMessage=undefined"
+      @delete-replay-message="replayMessage = undefined"
       :reply-message="replayMessage"
       ref="chatControl"
     ></ChatControl>
@@ -120,14 +120,14 @@ export default {
         this.socket.emit(
           'chatPagination',
           this.messageBundle - 1,
-          this.messagesOrder,
+          this.messagesOrder
         );
         this.messageBundle -= 1;
       } else if (direction === 'down') {
         this.socket.emit(
           'chatPagination',
           this.messageBundle + 1,
-          this.messagesOrder,
+          this.messagesOrder
         );
         this.messageBundle += 1;
       }
