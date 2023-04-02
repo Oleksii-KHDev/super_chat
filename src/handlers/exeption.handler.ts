@@ -4,7 +4,18 @@ import { HttpError } from 'http-errors';
 import dedent from 'dedent';
 import chalk from 'chalk';
 
+/**
+ * @classdesc Default express exception handler
+ */
 export class ExceptionHandler implements IExceptionHandler {
+  /**
+   * Handle error and send it to client
+   *
+   * @param {Error|HttpError} err Error object
+   * @param req
+   * @param res
+   * @param next
+   */
   catch(
     err: Error | HttpError,
     req: Request,

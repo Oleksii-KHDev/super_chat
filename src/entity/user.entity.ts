@@ -1,7 +1,7 @@
 import bcryptjs from 'bcryptjs';
 
 /**
- * Class for user business entity
+ * @classdesc Class for user business entity
  */
 export class User {
   constructor(
@@ -10,9 +10,16 @@ export class User {
     private _password?: string,
     private _homeUrl?: string,
     private _id?: number,
+
+    /**
+     * Avatar file name
+     */
     private _avatar?: string
   ) {}
 
+  /**
+   * Class getters and setters
+   */
   get login(): string {
     return this._login;
   }
@@ -42,7 +49,7 @@ export class User {
   }
 
   /**
-   * Create has for user password
+   * Create hash for user password
    *
    * @param pass user password
    * @param salt salt for creating has

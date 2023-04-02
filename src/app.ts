@@ -12,13 +12,34 @@ import dedent from 'dedent';
 import cors from 'cors';
 import { CORS_SETTINGS } from './constants.js';
 
+/**
+ * @classdesc Main app class
+ */
 export class App {
+  /**
+   * Express app
+   * @protected
+   */
   protected readonly app: Express;
+
+  /**
+   * Node HTTP server
+   * @protected
+   */
   protected server?: Server;
+  /**
+   * Server port
+   * @protected
+   */
   protected readonly port: number;
   protected readonly userController: UserController;
   protected readonly exceptionHandler: ExceptionHandler;
   protected readonly messageController: MessageController;
+
+  /**
+   * Datasource
+   * @protected
+   */
   protected prismaService: PrismaService;
 
   constructor(
@@ -35,21 +56,43 @@ export class App {
     this.prismaService = prismaService;
   }
 
+  /**
+   * Add BodyParser
+   * @protected
+   */
   protected useBodyParser() {
     this.app.use(express.json());
   }
+
+  /**
+   * Cors middleware
+   * @protected
+   */
   protected useCors() {
     this.app.use(cors(CORS_SETTINGS));
   }
+
+  /**
+   * Routes
+   * @protected
+   */
   protected useRoutes() {
     this.app.use('/user', this.userController.router);
     this.app.use('/message', this.messageController.router);
   }
 
+  /**
+   * Error handler
+   * @protected
+   */
   protected useExceptionHandler() {
     this.app.use(this.exceptionHandler.catch.bind(this.exceptionHandler));
   }
 
+  /**
+   * Static files
+   * @protected
+   */
   protected useStaticPath() {
     const publicPath = getPublicUrl();
     this.app.use(express.static(publicPath));
@@ -64,6 +107,10 @@ export class App {
     socketServer.addServerEvents();
   }
 
+  /**
+   * Server process events handler
+   * @protected
+   */
   protected addProcessEvents() {
     process.on('exit', async () => {
       console.log(`Chat process exits`);

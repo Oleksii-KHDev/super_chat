@@ -65,7 +65,7 @@ export class ChatService implements IChatService {
   }
 
   /**
-   * Returns all messages without parent
+   * Recursively returns all nested messages
    *
    * @private
    */
@@ -106,6 +106,15 @@ export class ChatService implements IChatService {
     }
   }
 
+  /**
+   * Returns messages matching the selection criteria from datasource
+   * This method should be in message repository
+   *
+   * @param parentId
+   * @param sortField
+   * @param sortOrder
+   * @private
+   */
   private async getMessagesFromDataSource(
     parentId: number,
     sortField: SortField,

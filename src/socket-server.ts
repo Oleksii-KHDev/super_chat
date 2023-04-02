@@ -18,6 +18,9 @@ import { mkdir } from 'node:fs/promises';
 import { writeFile } from 'node:fs';
 import { ORDER_SORTING } from './types/message.types.js';
 
+/**
+ * @classdesc Socket server class
+ */
 export class ChatSocketServer {
   protected socketService?: SocketServer;
   private readonly _messageService: IMessageService;
@@ -47,6 +50,7 @@ export class ChatSocketServer {
   }
 
   /**
+   * New message event handler
    * Save message and send broadcast to all clients
    *
    * @param socket
@@ -95,6 +99,14 @@ export class ChatSocketServer {
     }
   }
 
+  /**
+   * Returns messages in appropriate order.
+   * Sort chat messages event handler
+   *
+   * @param socket
+   * @param sorting
+   * @protected
+   */
   protected async onSortMessages(socket: Socket, sorting: ORDER_SORTING) {
     try {
       const messages = await this.getAllMessages({
@@ -108,6 +120,14 @@ export class ChatSocketServer {
     }
   }
 
+  /**
+   * Chat pagination event handler
+   *
+   * @param socket
+   * @param offset
+   * @param sorting
+   * @protected
+   */
   protected async onChatPagination(
     socket: Socket,
     offset: number,
@@ -125,6 +145,15 @@ export class ChatSocketServer {
     }
   }
 
+  /**
+   * Returns messages
+   *
+   * @param {number} amount Amount of returned messages
+   * @param {number} offset Offset. Number of needed page.
+   * @param sortField
+   * @param sortOrder
+   * @protected
+   */
   protected async getAllMessages({
     amount,
     offset,
@@ -139,6 +168,9 @@ export class ChatSocketServer {
     });
   }
 
+  /**
+   * Register handlers to socket event
+   */
   public addServerEvents() {
     if (this.socketService) {
       this.socketService.on('connection', async (socket) => {

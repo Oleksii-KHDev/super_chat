@@ -4,7 +4,7 @@ import { IMessageRepositoryInterface } from '../interfaces/message-repository.in
 import { IChatMessage } from '../interfaces/chat-message.interface.js';
 
 /**
- * Service for working with messages
+ * @classdesc Service for working with messages
  */
 export default class MessageService implements IMessageService {
   constructor(

@@ -5,7 +5,7 @@ import { IUserRepositoryInterface } from '../interfaces/user-repository.interfac
 const { SALT } = process.env;
 
 /**
- * Service for working with users
+ * @classdesc Service for working with users
  */
 export default class UserService implements IUserService {
   constructor(private readonly userRepository: IUserRepositoryInterface) {}
@@ -54,6 +54,11 @@ export default class UserService implements IUserService {
     return newUser;
   }
 
+  /**
+   * Returns information about existing user
+   *
+   * @param login
+   */
   async getUserInfo(login: string): Promise<User | null> {
     const existedUser = await this.userRepository.find(login);
 
@@ -71,6 +76,12 @@ export default class UserService implements IUserService {
     return new User(login, name, undefined, homePage, id, avatar);
   }
 
+  /**
+   * Checks user password
+   *
+   * @param login
+   * @param checkPassword
+   */
   async validateUser({
     login,
     checkPassword,

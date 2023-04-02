@@ -7,6 +7,9 @@ import { MessageController } from './controllers/message.controller.js';
 import UserService from './services/user.service.js';
 import { UsersRepository } from './repositories/user.repository.js';
 
+/**
+ * Starts chat server
+ */
 async function bootstrap() {
   const prismaService = new PrismaService();
   const app = new App(

@@ -4,7 +4,7 @@ import { User as UserModel } from '@prisma/client';
 import PrismaService from '../services/prisma.service.js';
 
 /**
- * Repository for get and save users to datasource
+ * @classdesc Repository for getting and saving users to datasource
  */
 export class UsersRepository implements IUserRepositoryInterface {
   /**
@@ -14,6 +14,15 @@ export class UsersRepository implements IUserRepositoryInterface {
    */
   constructor(private readonly prismaService: PrismaService) {}
 
+  /**
+   * Adds information about new user to datasource
+   *
+   * @param login
+   * @param password
+   * @param name
+   * @param homeUrl
+   * @param avatar
+   */
   async create({
     login,
     password,
@@ -36,6 +45,10 @@ export class UsersRepository implements IUserRepositoryInterface {
     }
   }
 
+  /**
+   * Finds user in datasource
+   * @param login
+   */
   async find(login: string): Promise<UserModel | null> {
     return this.prismaService.getClient().user.findFirst({
       where: {

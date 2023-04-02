@@ -4,6 +4,9 @@ import { NextFunction, Request, Response } from 'express';
 import { IUserService } from '../interfaces/user-service.interface.js';
 import createError from 'http-errors';
 
+/**
+ * @classdesc Controller for user authentication (login and register routes)
+ */
 export class UserController extends BaseController implements IController {
   constructor(private readonly userService: IUserService) {
     super();
@@ -13,6 +16,12 @@ export class UserController extends BaseController implements IController {
     ]);
   }
 
+  /**
+   * Handler for user/login request
+   * @param req
+   * @param res
+   * @param next
+   */
   async login(req: Request, res: Response, next: NextFunction) {
     const result = await this.userService.validateUser(req.body);
 
@@ -40,6 +49,13 @@ export class UserController extends BaseController implements IController {
     this.sendJson(res, 200, resp);
   }
 
+  /**
+   * Handler for user/register route
+   *
+   * @param req
+   * @param res
+   * @param next
+   */
   async register(
     req: Request,
     res: Response,

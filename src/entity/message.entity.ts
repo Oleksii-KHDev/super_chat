@@ -1,5 +1,5 @@
 /**
- * Class for message business entity
+ * @classdesc Class for message business entity
  */
 
 export class Message {
@@ -7,10 +7,23 @@ export class Message {
     private readonly _parentId: number,
     private _userId: number,
     private _text: string,
+
+    /**
+     * @property {number?} _padding Space of left padding in chat window
+     */
     private _padding?: number,
+
     private _createdAt?: Date,
+
+    /**
+     * @property {string|null|undefined} _file file attached to message
+     */
     private _file?: string | null
   ) {}
+
+  /**
+   * Getters and setters for class private property
+   */
 
   get parentId(): number {
     return this._parentId;

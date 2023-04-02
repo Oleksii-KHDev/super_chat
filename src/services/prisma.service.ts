@@ -1,4 +1,8 @@
 import { PrismaClient } from '@prisma/client';
+
+/**
+ * Service for connecting to SQLite datasource
+ */
 export default class PrismaService {
   private readonly _client: PrismaClient;
 
@@ -21,6 +25,9 @@ export default class PrismaService {
     await this._client.$disconnect();
   }
 
+  /**
+   * Datasource client instance
+   */
   getClient(): PrismaClient {
     return this._client;
   }

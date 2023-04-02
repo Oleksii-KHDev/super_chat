@@ -3,6 +3,11 @@ import { BaseController } from './base.controller.js';
 import { IController } from '../interfaces/controller.interface.js';
 import PrismaService from '../services/prisma.service.js';
 
+/**
+ * Sorry, I don't use this controller !!!
+ *
+ * @deprecated
+ */
 export class MessageController extends BaseController implements IController {
   constructor(protected readonly prismaService: PrismaService) {
     super();
