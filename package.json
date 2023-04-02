@@ -2,16 +2,8 @@
   "name": "super_chat",
   "version": "1.0.0",
   "description": "Test task for dZENcode. Chat using Node.js, Vue.js, Socket.io, Express.js, Prisma",
-  "main": "/server/server.js",
   "scripts": {
-    "start": "node --trace-warnings -r dotenv/config dist/super-chat.js dotenv_config_path=.env",
-    "dev": "npx nodemon -e ts --ignore 'node_modules/**/node_modules' --exec \"npm run build && node --trace-warnings -r dotenv/config dist/super-chat.js dotenv_config_path=./.env\"",
-    "pretty": "prettier --write --ignore-unknown **/*.{js,jsx,vue,ts}",
-    "lint": "eslint --ext .ts **/*",
-    "lint:fix": "eslint --fix --color --ext .ts **/*",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky install",
-    "build": "npx tsc"
+    "start": "node -r dotenv/config dist/super-chat.js dotenv_config_path=.env"
   },
   "repository": {
     "type": "git",
@@ -56,12 +48,6 @@
     "prettier": "2.8.4",
     "prisma": "^4.11.0",
     "typescript": "^4.9.5"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write --ignore-unknown **/*.{js,jsx,vue,ts}",
-      "eslint --fix --color"
-    ]
   },
   "dependencies": {
     "@prisma/client": "^4.11.0",

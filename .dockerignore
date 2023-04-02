@@ -1,0 +1,16 @@
+node_modules
+.git
+.idea
+vue-spa
+.husky
+src
+.dockerignore
+.env.example
+.eslintrc.json
+.gitattributes
+.gitignore
+.prettierignore
+.prettierrc.json
+Dockerfile
+tsconfig.json
+
