@@ -118,9 +118,15 @@ export default {
   data() {
     return {
       avatar1: 'assets/avatar1.svg',
+      /**
+       * @property {object} msg Current message
+       */
       msg: this.message,
       padding: 0,
       serverUrl: this.$store.getters.serverUrl,
+      /**
+       * @property {number} messagesInChat Max count of messages on one chat page
+       */
       messagesInChat: 0,
       arrowDownTooltip: false,
       arrowUpTooltip: false,
@@ -129,7 +135,6 @@ export default {
   created() {
     this.padding = this.message.padding;
     this.messagesInChat = process.env.VUE_APP_MESSAGES_IN_CHAT;
-    console.log(this.message);
   },
 
   beforeUpdate() {
@@ -137,9 +142,15 @@ export default {
   },
 
   methods: {
+    /**
+     * Emits 'reply' event when user replies on message
+     */
     reply() {
       this.$emit('reply', this.message);
     },
+    /**
+     * Emits 'sort' event when user sorts chat messages
+     */
     sort(order) {
       this.$emit('sort', order);
     },

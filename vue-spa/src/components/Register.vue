@@ -249,11 +249,17 @@ export default {
     this.createCaptcha();
   },
   methods: {
+    /**
+     * Creates new captcha image
+     *
+     * @returns {Promise<void>}
+     */
     async createCaptcha() {
       const c = await getCaptcha();
       this.captchaImg = c.data;
       this.captchaString = c.text;
     },
+
     onFocus() {
       if (this.isShowFormError) {
         this.isShowFormError = false;
@@ -261,18 +267,28 @@ export default {
       }
     },
 
+    /**
+     * Registration form validation
+     *
+     * @returns {boolean}
+     */
     formValidation() {
       const loginValidation = this.loginValidation();
       const passwordValidation = this.passwordValidation();
       const nameValidation = this.nameValidation();
       const captchaValidation = this.captchaValidation();
       return (
-        loginValidation &&
-        passwordValidation &&
-        nameValidation &&
-        captchaValidation
+        loginValidation
+        && passwordValidation
+        && nameValidation
+        && captchaValidation
       );
     },
+
+    /**
+     * Validate captcha inputs
+     * @returns {boolean}
+     */
     captchaValidation() {
       if (this.captchaString !== this.captchaInputValue.trim()) {
         this.isShowCaptchaError = true;
@@ -283,6 +299,12 @@ export default {
       this.captchaErrorMessage = '';
       return true;
     },
+
+    /**
+     * Validate username field
+     *
+     * @returns {boolean}
+     */
     nameValidation() {
       if (!this.name) {
         this.isShowNameError = true;
@@ -293,6 +315,12 @@ export default {
       this.nameErrorMessage = '';
       return true;
     },
+
+    /**
+     * Validate user login
+     *
+     * @returns {boolean}
+     */
     loginValidation() {
       if (!this.login) {
         this.isShowLoginError = true;
@@ -310,6 +338,12 @@ export default {
       this.loginErrorMessage = '';
       return true;
     },
+
+    /**
+     * Validate passwords fields (password and confirm password)
+     *
+     * @returns {boolean}
+     */
     passwordValidation() {
       let result = true;
 
@@ -342,6 +376,12 @@ export default {
 
       return result;
     },
+
+    /**
+     * Sends user registration data to server
+     *
+     * @returns {Promise<void>}
+     */
     async submitForm() {
       if (this.formValidation()) {
         const resp = await RegisterRequest({

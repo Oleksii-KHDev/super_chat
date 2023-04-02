@@ -112,14 +112,30 @@ export default {
         this.formErrorMessage = '';
       }
     },
+
+    /**
+     * Redirects to registration form
+     */
     register() {
       this.$router.push('/register');
     },
+
+    /**
+     * Validates user data before sending to server
+     *
+     * @returns {boolean} Valid or not
+     */
     formValidation() {
       const loginValidation = this.loginValidation();
       const passwordValidation = this.passwordValidation();
       return loginValidation && passwordValidation;
     },
+
+    /**
+     * Validates user login
+     *
+     * @returns {boolean} Valid or not
+     */
     loginValidation() {
       if (!this.login) {
         this.isShowLoginError = true;
@@ -137,6 +153,12 @@ export default {
       this.loginErrorMessage = '';
       return true;
     },
+
+    /**
+     * Validates user password
+     *
+     * @returns {boolean}
+     */
     passwordValidation() {
       if (!this.password) {
         this.isShowPasswordError = true;
@@ -148,6 +170,12 @@ export default {
       this.PasswordErrorMessage = '';
       return true;
     },
+
+    /**
+     * Sends user data to server
+     *
+     * @returns {Promise<void>}
+     */
     async loginChat() {
       if (this.formValidation()) {
         const resp = await loginRequest({

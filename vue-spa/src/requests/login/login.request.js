@@ -8,6 +8,12 @@ import {
 const { VUE_APP_SERVER_URL: SERVER_URL } = process.env;
 const { VUE_APP_SERVER_PORT: SERVER_PORT } = process.env;
 
+/**
+ * Request during user login. If successful also returns user object
+ *
+ * @param {object} payload
+ * @returns {Promise<*|{message: string, status: string, user?: object}>}
+ */
 export default async function loginRequest(payload) {
   const url = `${SERVER_URL}:${SERVER_PORT}${LOGIN_URL}`;
 

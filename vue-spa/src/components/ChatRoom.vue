@@ -62,31 +62,38 @@ export default {
        * @property {string} chatName chat title string
        */
       chatName: this.$store.getters.appName,
+
       /**
        * @property {Object[]} chatMessages array of current chat messages
        */
       chatMessages: [],
+
       /**
        * @property {string} noMessagesText text is displayed whe chat
        * doesn't have any message
        */
       noMessagesText: 'There are no messages in the chat',
+
       /**
        * @property {Object} socket current socket connection
        */
       socket: {},
+
       /**
        * @property {Object} currentUser current user
        */
       currentUser: this.$store.getters.currentUser,
+
       /**
        * @property {Number} messageBundle current chat page
        */
       messageBundle: 1,
+
       /**
        * @property {Object} replayMessage contains a message to which user respond
        */
       replayMessage: undefined,
+
       /**
        * @property {Object} messagesOrder sorting order
        */
@@ -94,11 +101,19 @@ export default {
     };
   },
   created() {
+    /**
+     * Socket connection
+     *
+     * @type {Socket}
+     */
     this.socket = io(
       /* eslint-disable-next-line comma-dangle */
       `${process.env.VUE_APP_SERVER_URL}:${process.env.VUE_APP_SERVER_PORT}`
     );
 
+    /**
+     * Sockets events
+     */
     this.socket.on('updateChat', this.updateChat);
     this.socket.on('chatInit', this.initChat);
     this.socket.on('chatSorted', this.updateChat);
@@ -115,6 +130,11 @@ export default {
       this.$router.push('/login');
     },
 
+    /**
+     * Shows next or previous page with chat messages
+     *
+     * @param {string} direction Direction of chat scrolling
+     */
     nextPage(direction) {
       if (direction === 'up' && this.messageBundle > 1) {
         this.socket.emit(
@@ -133,11 +153,21 @@ export default {
       }
     },
 
+    /**
+     * Handler from initChat event
+     *
+     * @param {Object[]} messages Chat messages
+     */
     initChat(messages) {
       this.chatMessages = messages;
       this.messageBundle = 1;
     },
 
+    /**
+     * Form message and emits newMessage event (sends message to socket server)
+     *
+     * @param {object} data Message data
+     */
     sendMessage(data) {
       const message = {
         user: this.currentUser,
@@ -153,19 +183,39 @@ export default {
       this.replayMessage = undefined;
     },
 
+    /**
+     * Sets message on which user reply. Reply event handler.
+     *
+     * @param {object} message
+     */
     replyMessage(message) {
       this.replayMessage = message;
     },
 
+    /**
+     * Update chat event handler
+     *
+     * @param {Array[object]} messages Chat messages
+     */
     updateChat(messages) {
       this.chatMessages = messages;
     },
 
+    /**
+     * Handler for chatSorted event. Emits sortMessage event to server
+     *
+     * @param {object} order Sorting order (asc or desc and field)
+     */
     sortChatMessages(order) {
       this.messagesOrder = order;
       this.socket.emit('sortMessage', order);
     },
 
+    /**
+     * Handler for serverError event
+     *
+     * @param {string} message Error text
+     */
     showServerError(message) {
       this.$refs.chatControl.showServerError(message);
     },

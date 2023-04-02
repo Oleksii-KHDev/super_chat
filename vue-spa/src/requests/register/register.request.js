@@ -8,6 +8,12 @@ import {
 const { VUE_APP_SERVER_URL: SERVER_URL } = process.env;
 const { VUE_APP_SERVER_PORT: SERVER_PORT } = process.env;
 
+/**
+ *
+ * @param {object} payload User registration information
+ * @returns {Promise<*|{message: string, status: string, user?: object}>}
+ * @constructor
+ */
 export default async function RegisterRequest(payload) {
   const url = `${SERVER_URL}:${SERVER_PORT}${REGISTER_URL}`;
 

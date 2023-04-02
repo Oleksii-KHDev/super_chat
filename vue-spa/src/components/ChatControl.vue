@@ -162,20 +162,52 @@ export default {
 
   data() {
     return {
+      /**
+       * @property {object} emptyTagsList Tags which don't have closed tag
+       */
       emptyTagsList: {},
+
       isShowError: false,
       errorMessage: '',
+
+      /**
+       * @property {string} captchaString Text on the captcha image
+       */
       captchaString: '',
+
+      /**
+       * @property {string} captchaImg Svg image
+       */
       captchaImg: '',
+
+      /**
+       * @property {string} captchaInputValue Captcha value which user has inputted
+       */
       captchaInputValue: '',
+
       dialog: false,
       message: '',
       replyHeader: '',
       isShowReplayAlert: false,
       isReplayAlertClosed: false,
+
+      /**
+       * @property {object} file Uploaded file
+       */
       file: null,
+
       linkUrl: '',
       linkTitle: '',
+
+      /**
+       * Links and files validation
+       *
+       * @property {object}  rules                     - Validation rules
+       * @property {function}  rules.linkRequired      - Link - is required field
+       * @property {function}  rules.linkTitleRequired - Link title attribute is required
+       * @property {function}  rules.linkInvalidFormat - Checks link format
+       * @property {function}  rules.fileSize          - Checks size of uploaded .txt file
+       */
       rules: {
         linkRequired: (v) => !!v || 'Links url required',
         linkTitleRequired: (v) => !!v || 'Links title required',
@@ -186,7 +218,7 @@ export default {
           ) || 'Invalid link format',
         fileSize: (v) => {
           if (v && v.length > 0 && v[0].name.trim().endsWith('.txt')) {
-            return v[0].size < 102 ? true : "Text file can't be over 100 Kb";
+            return v[0].size < 102400 ? true : "Text file can't be over 100 Kb";
           }
           return true;
         },
@@ -217,11 +249,21 @@ export default {
   },
 
   methods: {
+    /**
+     * Shows error from socket server
+     * @param {string} message Error message
+     */
     showServerError(message) {
       this.errorMessage = message;
       this.isShowError = true;
     },
 
+    /**
+     * Validates that message is correct HTML
+     *
+     * @param {string} text User message with HTML
+     * @returns {Promise<boolean>} is message valid or invalid HTML
+     */
     async validateClosedTags(text) {
       let result = true;
       const regExpOpenTag = /<\s*([^/].*?)\s+.*?>/gi;
@@ -273,6 +315,11 @@ export default {
       return result;
     },
 
+    /**
+     * Creates new captcha image
+     *
+     * @returns {Promise<void>}
+     */
     async createCaptcha() {
       try {
         const c = await getCaptcha();
@@ -304,18 +351,30 @@ export default {
       this.linkTitle = '';
     },
 
+    /**
+     * Adds <strong> tag
+     */
     strongButtonClick() {
       this.insertTag('strong');
     },
 
+    /**
+     * Adds <code> tag
+     */
     codeButtonClick() {
       this.insertTag('code');
     },
 
+    /**
+     * Adds <i> tag
+     */
     iButtonClick() {
       this.insertTag('i');
     },
 
+    /**
+     * Adds <a> tag
+     */
     aButtonClick() {
       /* eslint-disable operator-linebreak */
       if (
@@ -328,6 +387,13 @@ export default {
       /* eslint-enable operator-linebreak */
     },
 
+    /**
+     *  Insert tag in message
+     *
+     * @param {string} tagName Name of the tag to add
+     * @param {string} hRef If added tag <a> contains value href attribute
+     * @param {string} title If added tag <a> contains value title attribute
+     */
     insertTag(tagName, hRef = '', title = '') {
       const textArea = this.$refs.messageText;
       const selectedText = this.message.substring(
@@ -347,6 +413,12 @@ export default {
       }
     },
 
+    /**
+     * Validate and send message to the socket server
+     *
+     * @param message
+     * @returns {Promise<void>}
+     */
     async sendMessage(message) {
       if (!message || /^\s*$/.test(message)) {
         this.errorMessage = "Message can't be empty";
@@ -389,10 +461,12 @@ export default {
       this.captchaInputValue = '';
     },
 
+    /**
+     * Hides element with replied message
+     */
     hideReplayField() {
       this.isShowReplayAlert = false;
       this.isReplayAlertClosed = true;
-      // this.$parent.replayMessage = undefined;
       this.$emit('deleteReplayMessage');
     },
   },
@@ -415,11 +489,6 @@ export default {
   color: black;
   width: 100%;
 }
-
-/*.btn-group .btn {*/
-/*  padding: 3px;*/
-/*  font-size: 0.8rem;*/
-/*}*/
 
 .send-btn {
   padding: 10px;
